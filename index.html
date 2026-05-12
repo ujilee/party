@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║  이종열 칠순 초대장 — Firebase 설정 안내                        ║
+  ╠══════════════════════════════════════════════════════════════╣
+  ║  1. https://console.firebase.google.com 에서 새 프로젝트 생성   ║
+  ║  2. Firestore Database → 데이터베이스 만들기 (테스트 모드)        ║
+  ║  3. 프로젝트 설정 → 내 앱 → 웹 앱 추가 → SDK 스니펫 복사          ║
+  ║  4. 아래 firebaseConfig 객체를 내 설정으로 교체                  ║
+  ║                                                              ║
+  ║  Firestore 보안 규칙 (Firestore → 규칙 탭에 붙여넣기):           ║
+  ║                                                              ║
+  ║  rules_version = '2';                                        ║
+  ║  service cloud.firestore {                                   ║
+  ║    match /databases/{database}/documents {                   ║
+  ║      match /rsvps/{doc} {                                    ║
+  ║        allow read: if false;                                 ║
+  ║        allow create: if                                      ║
+  ║          request.resource.data.keys().hasAll(                ║
+  ║            ['name','attend','count','createdAt']) &&         ║
+  ║          request.resource.data.name is string &&             ║
+  ║          request.resource.data.name.size() > 0 &&           ║
+  ║          request.resource.data.name.size() <= 20 &&         ║
+  ║          request.resource.data.attend in                    ║
+  ║            ['yes','no','maybe'] &&                           ║
+  ║          request.resource.data.count is int &&               ║
+  ║          request.resource.data.count >= 0 &&                 ║
+  ║          request.resource.data.count <= 20;                  ║
+  ║      }                                                       ║
+  ║      match /messages/{doc} {                                 ║
+  ║        allow read: if resource.data.public == true;          ║
+  ║        allow create: if                                      ║
+  ║          request.resource.data.keys().hasAll(                ║
+  ║            ['name','rel','title','body','public',            ║
+  ║             'createdAt']) &&                                 ║
+  ║          request.resource.data.name is string &&             ║
+  ║          request.resource.data.name.size() > 0 &&           ║
+  ║          request.resource.data.name.size() <= 20 &&         ║
+  ║          request.resource.data.body is string &&             ║
+  ║          request.resource.data.body.size() > 0 &&           ║
+  ║          request.resource.data.body.size() <= 500 &&        ║
+  ║          request.resource.data.rel in ['자녀','배우자',       ║
+  ║            '형제·자매','친척','친구','지인'] &&                  ║
+  ║          request.resource.data.public is bool;               ║
+  ║      }                                                       ║
+  ║    }                                                         ║
+  ║  }                                                           ║
+  ╚══════════════════════════════════════════════════════════════╝
+-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이종열 칠순 초대장</title>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#b8860b;--gold2:#d4a017;--gold-light:#fdf3d0;--gold-border:#e8c84a;
+  --rose:#c0696a;--rose-light:#fdf0f0;
+  --bg:#faf8f3;--bg2:#fff;--bg3:#f5f0e8;
+  --text:#2c2416;--text2:#7a6a50;--text3:#a89878;
+  --border:#e8e0cc;--border2:#d4c8a8;
+  --green:#3a7d44;--green-light:#eef6f0;
+  --radius:14px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+
+/* ── SCREENS ── */
+.screen{display:none;animation:fadeIn .3s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── NAV ── */
+.top-nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(250,248,243,.95);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.75rem 1.25rem;
+}
+.nav-logo{font-size:1rem;font-weight:700;color:var(--gold);letter-spacing:-.01em;white-space:nowrap}
+.nav-tabs{display:flex;gap:3px}
+.nav-tab{
+  padding:.35rem .65rem;border-radius:8px;border:none;
+  background:transparent;font-size:.78rem;color:var(--text2);cursor:pointer;
+  transition:background .2s,color .2s;white-space:nowrap;
+}
+.nav-tab:hover{background:var(--gold-light);color:var(--gold)}
+.nav-tab.active{background:var(--gold-light);color:var(--gold);font-weight:600}
+
+/* ── CONTAINER ── */
+.container{max-width:480px;margin:0 auto;padding:0 0 5rem}
+
+/* ── HERO ── */
+.hero-photo{
+  width:100%;height:240px;
+  background:linear-gradient(160deg,#f7e7b4 0%,#f0d090 40%,#e8b87a 100%);
+  position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.hero-deco{
+  position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Ccircle cx='100' cy='100' r='80' fill='none' stroke='rgba(184,134,11,0.15)' stroke-width='2'/%3E%3Ccircle cx='100' cy='100' r='60' fill='none' stroke='rgba(184,134,11,0.1)' stroke-width='1'/%3E%3Ccircle cx='100' cy='100' r='40' fill='none' stroke='rgba(184,134,11,0.07)' stroke-width='1'/%3E%3C/svg%3E") center/300px repeat;
+  opacity:.5;
+}
+.hero-inner{z-index:1;text-align:center;padding:1.5rem}
+.hero-icon{font-size:2.8rem;margin-bottom:.5rem}
+.hero-name{font-size:1.6rem;font-weight:700;color:#5c3d0a;letter-spacing:-.02em}
+.hero-sub{font-size:.88rem;color:#8a6020;margin-top:.3rem}
+.hero-badge{
+  display:inline-block;margin-top:.75rem;
+  background:rgba(184,134,11,.15);border:1px solid rgba(184,134,11,.3);
+  color:#7a5a0a;font-size:.78rem;font-weight:600;
+  padding:.3rem .9rem;border-radius:100px;
+}
+
+/* ── INVITE BODY ── */
+.invite-body{padding:1.5rem 1.25rem}
+.invite-title{text-align:center;margin-bottom:1.25rem}
+.invite-title h2{font-size:1.2rem;font-weight:700;color:var(--text);line-height:1.5}
+.invite-title p{font-size:.88rem;color:var(--text2);margin-top:.5rem;line-height:1.8}
+
+.info-box{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1.1rem 1.25rem;margin-bottom:1rem;
+}
+.info-row{display:flex;align-items:flex-start;gap:.75rem;padding:.55rem 0}
+.info-row+.info-row{border-top:1px solid var(--border)}
+.info-icon{font-size:1.1rem;margin-top:.1rem;flex-shrink:0}
+.info-label{font-size:.72rem;color:var(--text3);margin-bottom:.15rem;letter-spacing:.02em}
+.info-val{font-size:.9rem;font-weight:500;color:var(--text);line-height:1.4}
+
+.divider{display:flex;align-items:center;gap:.75rem;margin:1.25rem 0;color:var(--text3);font-size:.78rem}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── BUTTONS ── */
+.action-btns{display:flex;flex-direction:column;gap:.6rem}
+.btn{
+  width:100%;padding:.88rem;border-radius:12px;border:none;
+  font-size:.95rem;font-weight:600;cursor:pointer;transition:all .18s;
+  font-family:inherit;display:flex;align-items:center;justify-content:center;gap:.4rem;
+}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn-gold{background:var(--gold);color:#fff}
+.btn-gold:not(:disabled):hover{background:var(--gold2);transform:translateY(-1px);box-shadow:0 4px 12px rgba(184,134,11,.3)}
+.btn-outline{background:transparent;border:1.5px solid var(--border2);color:var(--text2)}
+.btn-outline:not(:disabled):hover{border-color:var(--gold);color:var(--gold)}
+.btn-rose{background:var(--rose);color:#fff}
+.btn-rose:not(:disabled):hover{opacity:.88;transform:translateY(-1px);box-shadow:0 4px 12px rgba(192,105,106,.3)}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:not(:disabled):hover{opacity:.88}
+.btn-sm{padding:.5rem .9rem;width:auto;font-size:.82rem;border-radius:9px}
+
+/* ── FORMS ── */
+.form-section{padding:1.25rem}
+.form-header{text-align:center;margin-bottom:1.5rem}
+.form-header h2{font-size:1.15rem;font-weight:700}
+.form-header p{font-size:.85rem;color:var(--text2);margin-top:.3rem}
+.form-group{margin-bottom:1.1rem}
+.form-label{font-size:.82rem;font-weight:600;color:var(--text2);margin-bottom:.45rem;display:block}
+.form-input{
+  width:100%;padding:.72rem .95rem;border:1.5px solid var(--border);
+  border-radius:10px;font-size:.92rem;font-family:inherit;
+  background:var(--bg2);color:var(--text);transition:border-color .2s,box-shadow .2s;outline:none;
+}
+.form-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,134,11,.1)}
+textarea.form-input{resize:vertical;min-height:90px}
+
+.attend-btns{display:flex;gap:.6rem}
+.attend-btn{
+  flex:1;padding:.65rem .5rem;border-radius:10px;
+  border:1.5px solid var(--border);background:var(--bg2);
+  font-size:.88rem;font-weight:500;cursor:pointer;transition:all .18s;
+  font-family:inherit;color:var(--text2);
+}
+.attend-btn.sel-yes{border-color:var(--green);background:var(--green-light);color:var(--green);font-weight:700}
+.attend-btn.sel-no{border-color:var(--rose);background:var(--rose-light);color:var(--rose);font-weight:700}
+.attend-btn.sel-maybe{border-color:var(--gold);background:var(--gold-light);color:var(--gold);font-weight:700}
+
+.count-row{display:flex;align-items:center;gap:.75rem}
+.count-btn{
+  width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);
+  background:var(--bg2);font-size:1.1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-weight:600;
+  transition:all .18s;
+}
+.count-btn:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-light)}
+.count-val{font-size:1.1rem;font-weight:700;min-width:28px;text-align:center}
+
+/* ── REL CHIPS ── */
+.rel-chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.rel-chip{
+  padding:.35rem .85rem;border-radius:100px;
+  border:1.5px solid var(--border);background:var(--bg2);
+  font-size:.82rem;cursor:pointer;transition:all .18s;color:var(--text2);
+}
+.rel-chip.sel{border-color:var(--gold);background:var(--gold-light);color:var(--gold);font-weight:600}
+
+.guide-box{
+  background:var(--gold-light);border:1px solid var(--gold-border);
+  border-radius:10px;padding:.75rem 1rem;margin-top:.65rem;
+  font-size:.82rem;color:#7a5a0a;line-height:1.6;
+}
+
+/* ── MESSAGE BOOK ── */
+.book-header{
+  padding:1.5rem 1.25rem 1rem;text-align:center;
+  background:linear-gradient(180deg,var(--gold-light) 0%,var(--bg) 100%);
+}
+.book-header h2{font-size:1.15rem;font-weight:700}
+.book-header p{font-size:.83rem;color:var(--text2);margin-top:.3rem}
+.book-count{
+  display:inline-flex;align-items:center;gap:.3rem;
+  background:var(--gold);color:#fff;font-size:.78rem;font-weight:700;
+  padding:.2rem .7rem;border-radius:100px;margin-top:.5rem;
+}
+
+.filter-row{display:flex;gap:.5rem;padding:.75rem 1.25rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.filter-row::-webkit-scrollbar{display:none}
+.filter-chip{
+  flex-shrink:0;padding:.35rem .9rem;border-radius:100px;
+  border:1.5px solid var(--border);background:var(--bg2);
+  font-size:.8rem;cursor:pointer;transition:all .18s;white-space:nowrap;color:var(--text2);
+}
+.filter-chip.active{border-color:var(--gold);background:var(--gold-light);color:var(--gold);font-weight:600}
+
+.msg-grid{padding:.5rem 1.25rem 1rem;display:flex;flex-direction:column;gap:.9rem}
+.msg-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1.1rem 1.2rem;
+  position:relative;overflow:hidden;
+  transition:box-shadow .2s,transform .2s;
+}
+.msg-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.07);transform:translateY(-1px)}
+.msg-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:linear-gradient(180deg,var(--gold) 0%,var(--gold2) 100%);
+}
+.msg-top{display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem}
+.msg-avatar{
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;font-weight:700;flex-shrink:0;
+}
+.msg-name{font-size:.92rem;font-weight:600}
+.msg-rel{font-size:.75rem;color:var(--text3);margin-top:.05rem}
+.msg-title{font-size:.88rem;font-weight:600;color:var(--gold);margin-bottom:.4rem}
+.msg-body{font-size:.88rem;color:var(--text2);line-height:1.75;white-space:pre-wrap}
+
+/* ── SKELETON LOADER ── */
+.skel{
+  background:linear-gradient(90deg,var(--bg3) 25%,var(--border) 50%,var(--bg3) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.4s infinite;
+  border-radius:6px;
+}
+@keyframes shimmer{0%{background-position:200% 0}to{background-position:-200% 0}}
+.skel-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1.1rem 1.2rem;
+}
+.skel-line{height:12px;margin-bottom:8px}
+.skel-circle{width:38px;height:38px;border-radius:50%;flex-shrink:0}
+
+/* ── SPINNER ── */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{
+  display:inline-block;width:18px;height:18px;
+  border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;
+  border-radius:50%;animation:spin .55s linear infinite;
+  vertical-align:middle;
+}
+.spinner-gold{border-color:rgba(184,134,11,.25);border-top-color:var(--gold)}
+
+/* ── SUCCESS ── */
+.success-screen{text-align:center;padding:3rem 2rem}
+.success-screen .icon{font-size:3.5rem;margin-bottom:.75rem;animation:pop .4s cubic-bezier(.36,.07,.19,.97)}
+@keyframes pop{0%{transform:scale(0)}60%{transform:scale(1.15)}to{transform:scale(1)}}
+.success-screen h3{font-size:1.2rem;font-weight:700;margin-bottom:.5rem}
+.success-screen p{font-size:.88rem;color:var(--text2);line-height:1.75}
+.success-btns{display:flex;flex-direction:column;gap:.6rem;margin-top:1.5rem}
+
+/* ── EMPTY STATE ── */
+.empty-state{
+  text-align:center;padding:3rem 1.5rem;
+  font-size:.9rem;color:var(--text3);line-height:1.8;
+}
+.empty-state .icon{font-size:2.5rem;margin-bottom:.75rem}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:2.5rem;left:50%;transform:translateX(-50%) translateY(16px);
+  background:#2c2416;color:#fff;padding:.75rem 1.5rem;
+  border-radius:100px;font-size:.85rem;opacity:0;transition:all .28s;z-index:200;
+  white-space:nowrap;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.2);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── CHAR COUNTER ── */
+.char-count{font-size:.75rem;color:var(--text3);text-align:right;margin-top:.3rem}
+.char-count.warn{color:var(--rose)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <div class="nav-logo">🎂 이종열 칠순</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showScreen('invite')">초대장</button>
+    <button class="nav-tab" onclick="showScreen('rsvp')">참석</button>
+    <button class="nav-tab" onclick="showScreen('message')">메시지</button>
+    <button class="nav-tab" onclick="showScreen('book')">메시지북</button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<!-- ══════════════ SCREEN: 초대장 ══════════════ -->
+<div id="screen-invite" class="screen active">
+  <div class="container">
+    <div class="hero-photo">
+      <div class="hero-deco"></div>
+      <div class="hero-inner">
+        <div class="hero-icon">🌸</div>
+        <div class="hero-name">이종열 님의 칠순</div>
+        <div class="hero-sub">일흔 번째 생일을 함께 축하합니다</div>
+        <div class="hero-badge">2026 · 6 · 27</div>
+      </div>
+    </div>
+
+    <div class="invite-body">
+      <div class="invite-title">
+        <h2>이종열 님의 일흔 번째 생일을<br>함께 축하해 주세요</h2>
+        <p>가족의 마음을 담아 작은 자리를 마련하였습니다.<br>참석 여부와 따뜻한 축하 한마디를 남겨주시면<br>큰 기쁨이 됩니다.</p>
+      </div>
+
+      <div class="info-box">
+        <div class="info-row">
+          <div class="info-icon">📅</div>
+          <div>
+            <div class="info-label">날짜 및 시간</div>
+            <div class="info-val">2026년 6월 27일 (토) 오전 11시</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-icon">📍</div>
+          <div>
+            <div class="info-label">장소</div>
+            <div class="info-val">경기도 하남시 미사동로 38 한채당</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-icon">📞</div>
+          <div>
+            <div class="info-label">문의</div>
+            <div class="info-val">010-1234-5678</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-icon">⏰</div>
+          <div>
+            <div class="info-label">참석 응답 마감</div>
+            <div class="info-val">2026년 6월 20일까지</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider">초대장 안내</div>
+
+      <div class="action-btns">
+        <button class="btn btn-gold" onclick="showScreen('rsvp')">✉️ 참석 여부 남기기</button>
+        <button class="btn btn-outline" onclick="showScreen('message')">💌 축하 메시지 남기기</button>
+        <button class="btn btn-outline" onclick="copyLink()">🔗 초대장 링크 공유</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ SCREEN: 참석 여부 ══════════════ -->
+<div id="screen-rsvp" class="screen">
+  <div class="container">
+    <div id="rsvp-form-wrap">
+      <div class="form-section">
+        <div class="form-header">
+          <h2>참석 여부 남기기</h2>
+          <p>이종열 님의 칠순 행사에 오실 수 있으신가요?</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">이름 *</label>
+          <input class="form-input" id="rsvp-name" type="text" placeholder="홍길동" maxlength="20">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">참석 여부 *</label>
+          <div class="attend-btns">
+            <button class="attend-btn" id="btn-yes" onclick="setAttend('yes')">✅ 참석</button>
+            <button class="attend-btn" id="btn-no" onclick="setAttend('no')">❌ 불참</button>
+            <button class="attend-btn" id="btn-maybe" onclick="setAttend('maybe')">🤔 미정</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">동반 인원 (본인 포함)</label>
+          <div class="count-row">
+            <button class="count-btn" onclick="changeCount(-1)">−</button>
+            <span class="count-val" id="count-val">1</span>
+            <button class="count-btn" onclick="changeCount(1)">+</button>
+            <span style="font-size:.82rem;color:var(--text3)">명</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">연락처 (선택)</label>
+          <input class="form-input" id="rsvp-phone" type="tel" placeholder="010-0000-0000" maxlength="15">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">요청사항 (알레르기, 식이 제한 등)</label>
+          <input class="form-input" id="rsvp-request" type="text" placeholder="특별한 요청이 있으시면 입력해 주세요" maxlength="100">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">축하 한마디</label>
+          <input class="form-input" id="rsvp-short" type="text" placeholder="짧은 축하 메시지를 남겨주세요" maxlength="80">
+        </div>
+
+        <button class="btn btn-gold" id="rsvp-submit-btn" onclick="submitRsvp(this)" style="margin-top:.5rem">응답 제출하기</button>
+      </div>
+    </div>
+
+    <div id="rsvp-success" class="success-screen" style="display:none">
+      <div class="icon">🎉</div>
+      <h3>응답이 전달되었습니다!</h3>
+      <p>소중한 응답 감사합니다.<br>따뜻한 축하 메시지도 남겨주시겠어요?</p>
+      <div class="success-btns">
+        <button class="btn btn-rose" onclick="showScreen('message')">💌 축하 메시지도 남기기</button>
+        <button class="btn btn-outline" onclick="showScreen('invite')">초대장으로 돌아가기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ SCREEN: 메시지 작성 ══════════════ -->
+<div id="screen-message" class="screen">
+  <div class="container">
+    <div id="msg-form-wrap">
+      <div class="form-section">
+        <div class="form-header">
+          <h2>축하 메시지 남기기</h2>
+          <p>이종열 님께 마음을 담은 메시지를 전해드려요</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">이름 *</label>
+          <input class="form-input" id="msg-name" type="text" placeholder="홍길동" maxlength="20">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">주인공과의 관계 *</label>
+          <div class="rel-chips" id="rel-chips">
+            <div class="rel-chip" onclick="setRel(this,'자녀')">자녀</div>
+            <div class="rel-chip" onclick="setRel(this,'배우자')">배우자</div>
+            <div class="rel-chip" onclick="setRel(this,'형제·자매')">형제·자매</div>
+            <div class="rel-chip" onclick="setRel(this,'친척')">친척</div>
+            <div class="rel-chip" onclick="setRel(this,'친구')">친구</div>
+            <div class="rel-chip" onclick="setRel(this,'지인')">지인</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">메시지 제목</label>
+          <input class="form-input" id="msg-title" type="text" placeholder="아버지께, 사랑하는 어른께 등" maxlength="40">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">축하 메시지 *</label>
+          <textarea class="form-input" id="msg-body" rows="5" placeholder="메시지를 자유롭게 작성해 주세요..." maxlength="500" oninput="onBodyInput(this)"></textarea>
+          <div class="char-count" id="char-count">0 / 500</div>
+          <div class="guide-box" id="msg-guide">💡 함께한 추억이나 감사하는 마음을 적어주세요.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">메시지북 공개 여부</label>
+          <div class="attend-btns" style="gap:.5rem">
+            <button class="attend-btn sel-yes" id="pub-yes" onclick="setPub(true)" style="flex:none;padding:.55rem 1.2rem">🔓 공개</button>
+            <button class="attend-btn" id="pub-no" onclick="setPub(false)" style="flex:none;padding:.55rem 1.2rem">🔒 비공개</button>
+          </div>
+        </div>
+
+        <button class="btn btn-rose" id="msg-submit-btn" onclick="submitMsg(this)" style="margin-top:.5rem">💌 마음 남기기</button>
+      </div>
+    </div>
+
+    <div id="msg-success" class="success-screen" style="display:none">
+      <div class="icon">💐</div>
+      <h3>메시지가 전달되었습니다</h3>
+      <p>소중한 마음 감사합니다.<br>이종열 님의 메시지북에 소중히 담겨 있습니다.</p>
+      <div class="success-btns">
+        <button class="btn btn-gold" onclick="showScreen('book')">📖 메시지북 보기</button>
+        <button class="btn btn-outline" onclick="showScreen('invite')">초대장으로 돌아가기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ SCREEN: 메시지북 ══════════════ -->
+<div id="screen-book" class="screen">
+  <div class="container">
+    <div class="book-header">
+      <h2>📖 모두가 남긴 축하의 마음</h2>
+      <p>이종열 님께 전해진</p>
+      <div class="book-count" id="book-count-badge">
+        <span id="msg-total-count">0</span>개의 메시지
+      </div>
+    </div>
+
+    <div class="filter-row">
+      <div class="filter-chip active" onclick="filterMsgs('all',this)">전체</div>
+      <div class="filter-chip" onclick="filterMsgs('자녀',this)">자녀</div>
+      <div class="filter-chip" onclick="filterMsgs('배우자',this)">배우자</div>
+      <div class="filter-chip" onclick="filterMsgs('형제·자매',this)">형제·자매</div>
+      <div class="filter-chip" onclick="filterMsgs('친척',this)">친척</div>
+      <div class="filter-chip" onclick="filterMsgs('친구',this)">친구</div>
+      <div class="filter-chip" onclick="filterMsgs('지인',this)">지인</div>
+    </div>
+
+    <div class="msg-grid" id="msg-grid">
+      <!-- skeleton shown on first load -->
+      <div class="skel-card" id="skel1">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem">
+          <div class="skel skel-circle"></div>
+          <div style="flex:1"><div class="skel skel-line" style="width:40%"></div><div class="skel skel-line" style="width:25%;height:10px;margin-top:4px"></div></div>
+        </div>
+        <div class="skel skel-line" style="width:60%;margin-bottom:10px"></div>
+        <div class="skel skel-line"></div>
+        <div class="skel skel-line" style="width:80%"></div>
+      </div>
+      <div class="skel-card" id="skel2">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem">
+          <div class="skel skel-circle"></div>
+          <div style="flex:1"><div class="skel skel-line" style="width:35%"></div><div class="skel skel-line" style="width:20%;height:10px;margin-top:4px"></div></div>
+        </div>
+        <div class="skel skel-line" style="width:55%;margin-bottom:10px"></div>
+        <div class="skel skel-line"></div>
+        <div class="skel skel-line" style="width:70%"></div>
+        <div class="skel skel-line" style="width:50%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════
+   FIREBASE 설정
+   아래 firebaseConfig를 내 프로젝트 설정으로 교체하세요
+   ════════════════════════════════════════════ */
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const rsvpCol = db.collection('rsvps');
+const msgCol = db.collection('messages');
+
+/* ── STATE ── */
+let attendState = '';
+let countVal = 1;
+let selectedRel = '';
+let isPublic = true;
+let allMessages = [];
+let currentFilter = 'all';
+let bookLoaded = false;
+
+/* ── AVATAR COLORS ── */
+const COLORS = ['#c0696a','#b8860b','#3a7d44','#6b7db3','#a07040','#7a5a9a','#4a8a9a','#9a6040'];
+function avatarColor(name) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff;
+  return COLORS[h % COLORS.length];
+}
+
+/* ── SCREENS ── */
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach((t, i) => {
+    t.classList.toggle('active', ['invite','rsvp','message','book'][i] === name);
+  });
+  document.getElementById('screen-' + name).classList.add('active');
+  window.scrollTo(0, 0);
+  if (name === 'book') initBookListener();
+}
+
+/* ── TOAST ── */
+function showToast(txt, duration = 2400) {
+  const el = document.getElementById('toast');
+  el.textContent = txt;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), duration);
+}
+
+/* ── LOADING BTN ── */
+function setLoading(btn, on) {
+  if (on) {
+    btn.disabled = true;
+    btn._label = btn.innerHTML;
+    btn.innerHTML = '<span class="spinner"></span>';
+  } else {
+    btn.disabled = false;
+    btn.innerHTML = btn._label;
+  }
+}
+
+/* ── COPY LINK ── */
+function copyLink() {
+  navigator.clipboard.writeText(location.href)
+    .then(() => showToast('링크가 복사되었습니다 🔗'))
+    .catch(() => showToast('복사에 실패했습니다'));
+}
+
+/* ══ RSVP ══ */
+function setAttend(val) {
+  attendState = val;
+  ['yes','no','maybe'].forEach(v => {
+    document.getElementById('btn-' + v).className = 'attend-btn' + (v === val ? ' sel-' + v : '');
+  });
+}
+
+function changeCount(d) {
+  countVal = Math.max(0, countVal + d);
+  document.getElementById('count-val').textContent = countVal;
+}
+
+async function submitRsvp(btn) {
+  const name = document.getElementById('rsvp-name').value.trim();
+  if (!name) { showToast('이름을 입력해 주세요'); return; }
+  if (!attendState) { showToast('참석 여부를 선택해 주세요'); return; }
+
+  setLoading(btn, true);
+  try {
+    await rsvpCol.add({
+      name,
+      attend: attendState,
+      count: countVal,
+      phone: document.getElementById('rsvp-phone').value.trim(),
+      request: document.getElementById('rsvp-request').value.trim(),
+      shortMsg: document.getElementById('rsvp-short').value.trim(),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    document.getElementById('rsvp-form-wrap').style.display = 'none';
+    document.getElementById('rsvp-success').style.display = 'block';
+  } catch (e) {
+    console.error(e);
+    showToast('저장 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+    setLoading(btn, false);
+  }
+}
+
+/* ══ MESSAGE ══ */
+function setRel(el, rel) {
+  selectedRel = rel;
+  document.querySelectorAll('.rel-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  const guides = {
+    '자녀': '💛 함께한 추억이나 감사하는 마음을 적어주세요.',
+    '배우자': '💝 함께해온 소중한 날들을 되새기며 적어주세요.',
+    '형제·자매': '👫 함께 자라온 추억을 담아 적어주세요.',
+    '친척': '🏡 가족으로서 전하고 싶은 따뜻한 말을 남겨주세요.',
+    '친구': '🌟 오랜 기억에 남는 일이나 축하의 말을 적어주세요.',
+    '지인': '🌿 칠순을 맞아 전하고 싶은 따뜻한 말을 남겨주세요.',
+  };
+  document.getElementById('msg-guide').textContent = guides[rel] || '💡 마음을 담아 자유롭게 적어주세요.';
+}
+
+function setPub(v) {
+  isPublic = v;
+  document.getElementById('pub-yes').className = 'attend-btn' + (v ? ' sel-yes' : '');
+  document.getElementById('pub-no').className = 'attend-btn' + (!v ? ' sel-no' : '');
+}
+
+function onBodyInput(el) {
+  const len = el.value.length;
+  const counter = document.getElementById('char-count');
+  counter.textContent = len + ' / 500';
+  counter.className = 'char-count' + (len > 450 ? ' warn' : '');
+}
+
+async function submitMsg(btn) {
+  const name = document.getElementById('msg-name').value.trim();
+  const body = document.getElementById('msg-body').value.trim();
+  if (!name) { showToast('이름을 입력해 주세요'); return; }
+  if (!selectedRel) { showToast('관계를 선택해 주세요'); return; }
+  if (!body) { showToast('메시지를 입력해 주세요'); return; }
+
+  setLoading(btn, true);
+  try {
+    await msgCol.add({
+      name,
+      rel: selectedRel,
+      title: document.getElementById('msg-title').value.trim() || `${name}님의 축하 메시지`,
+      body,
+      public: isPublic,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    document.getElementById('msg-form-wrap').style.display = 'none';
+    document.getElementById('msg-success').style.display = 'block';
+  } catch (e) {
+    console.error(e);
+    showToast('저장 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+    setLoading(btn, false);
+  }
+}
+
+/* ══ MESSAGE BOOK (real-time) ══ */
+function initBookListener() {
+  if (bookLoaded) return; // already listening
+  bookLoaded = true;
+
+  msgCol
+    .where('public', '==', true)
+    .orderBy('createdAt', 'desc')
+    .onSnapshot(snap => {
+      allMessages = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      document.getElementById('msg-total-count').textContent = allMessages.length;
+      renderBook();
+    }, err => {
+      console.error('Firestore 리스너 오류:', err);
+      // 인덱스 오류인 경우 Firestore 콘솔 링크가 콘솔에 출력됩니다
+      document.getElementById('msg-grid').innerHTML = `
+        <div class="empty-state">
+          <div class="icon">⚠️</div>
+          데이터를 불러오는 중 오류가 발생했습니다.<br>
+          브라우저 콘솔을 확인해 주세요.
+        </div>`;
+    });
+}
+
+function filterMsgs(rel, el) {
+  currentFilter = rel;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderBook();
+}
+
+function renderBook() {
+  const grid = document.getElementById('msg-grid');
+  const filtered = currentFilter === 'all'
+    ? allMessages
+    : allMessages.filter(m => m.rel === currentFilter);
+
+  if (!filtered.length) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">💌</div>
+        아직 메시지가 없습니다.<br>첫 번째 축하 메시지를 남겨보세요!
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(m => {
+    const col = avatarColor(m.name);
+    const initials = m.name.slice(-2);
+    return `<div class="msg-card">
+      <div class="msg-top">
+        <div class="msg-avatar" style="background:${col}22;color:${col}">${initials}</div>
+        <div>
+          <div class="msg-name">${esc(m.name)}</div>
+          <div class="msg-rel">${esc(m.rel)}</div>
+        </div>
+      </div>
+      <div class="msg-title">${esc(m.title)}</div>
+      <div class="msg-body">${esc(m.body)}</div>
+    </div>`;
+  }).join('');
+}
+
+/* XSS 방지 */
+function esc(str) {
+  return String(str ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
