@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>이종열님 환갑잔치 초대장</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -17,17 +16,11 @@
   --radius:14px;
 }
 html{scroll-behavior:smooth}
-body{
-  font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕',sans-serif;
-  background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;
-}
-
-/* SCREENS */
+body{font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
 .screen{display:none;animation:fadeIn .3s ease}
 .screen.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-/* NAV */
 .top-nav{
   position:sticky;top:0;z-index:50;
   background:rgba(242,242,242,0.94);backdrop-filter:blur(10px);
@@ -37,76 +30,37 @@ body{
 }
 .nav-logo{font-size:.95rem;font-weight:700;color:var(--sky);letter-spacing:-.01em;white-space:nowrap}
 .nav-tabs{display:flex;gap:4px}
-.nav-tab{
-  padding:.35rem .65rem;border-radius:8px;border:none;
-  background:transparent;font-size:.78rem;color:var(--text2);cursor:pointer;
-  transition:background .2s,color .2s;
-}
+.nav-tab{padding:.35rem .65rem;border-radius:8px;border:none;background:transparent;font-size:.78rem;color:var(--text2);cursor:pointer;transition:background .2s,color .2s}
 .nav-tab:hover{background:var(--sky-light);color:var(--sky)}
 .nav-tab.active{background:var(--sky-light);color:var(--sky);font-weight:600}
-
-/* CONTAINER */
 .container{max-width:480px;margin:0 auto;padding:0 0 4rem}
 
 /* HERO */
-.hero-photo{
-  width:100%;height:260px;
-  position:relative;display:flex;align-items:center;justify-content:center;
-  overflow:hidden;
-}
-.hero-bg{
-  position:absolute;inset:0;
-  background:linear-gradient(160deg,#b8dff0 0%,#7ec8e3 40%,#3a8ec0 100%);
-}
-.hero-bg-img{
-  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  display:none;
-}
-.hero-overlay{
-  position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(0,0,0,0.04) 0%,rgba(0,0,0,0.38) 100%);
-}
-.hero-inner{z-index:1;text-align:center;padding:1.5rem}
-.hero-name{
-  font-size:1.65rem;font-weight:700;color:#fff;
-  letter-spacing:-.02em;text-shadow:0 1px 6px rgba(0,0,0,0.28);
-}
-.hero-sub{
-  font-size:.88rem;color:rgba(255,255,255,0.93);
-  margin-top:.4rem;text-shadow:0 1px 4px rgba(0,0,0,0.22);
-}
+.hero-photo{width:100%;height:280px;position:relative;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:linear-gradient(160deg,#b8dff0 0%,#7ec8e3 40%,#3a8ec0 100%)}
+.hero-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;display:none}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.05) 0%,rgba(0,0,0,0.52) 100%)}
+.hero-inner{z-index:1;text-align:center;padding:1.5rem 1.5rem 1.75rem;width:100%}
+.hero-name{font-size:1.75rem;font-weight:700;color:#fff;letter-spacing:-.02em;text-shadow:0 2px 8px rgba(0,0,0,0.35)}
+.hero-sub{font-size:.9rem;color:rgba(255,255,255,0.92);margin-top:.4rem;text-shadow:0 1px 4px rgba(0,0,0,0.3)}
 
-/* INVITE BODY */
 .invite-body{padding:1.5rem 1.25rem}
 .invite-title{text-align:center;margin-bottom:1.25rem}
 .invite-title h2{font-size:1.2rem;font-weight:700;color:var(--text);line-height:1.4}
 .invite-title p{font-size:.88rem;color:var(--text2);margin-top:.5rem;line-height:1.75}
-
-.info-box{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:var(--radius);padding:1.1rem 1.25rem;margin-bottom:1rem;
-}
+.info-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.25rem;margin-bottom:1rem}
 .info-row{display:flex;align-items:flex-start;gap:.75rem;padding:.5rem 0}
 .info-row+.info-row{border-top:1px solid var(--border)}
 .info-icon{font-size:1.1rem;margin-top:.1rem;flex-shrink:0}
 .info-label{font-size:.75rem;color:var(--text3);margin-bottom:.15rem}
 .info-val{font-size:.9rem;font-weight:500;color:var(--text)}
-
 .divider{display:flex;align-items:center;gap:.75rem;margin:1.25rem 0;color:var(--text3);font-size:.78rem}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
-
 .action-btns{display:flex;flex-direction:column;gap:.6rem}
-.btn{
-  width:100%;padding:.85rem;border-radius:12px;border:none;
-  font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s;
-  font-family:inherit;
-}
-.btn-sky{background:var(--sky);color:#fff}
-.btn-sky:hover{background:var(--sky2)}
-.btn-outline{background:transparent;border:1.5px solid var(--border2);color:var(--text2)}
-.btn-outline:hover{border-color:var(--sky);color:var(--sky)}
-.btn-rose{background:var(--rose);color:#fff}
-.btn-rose:hover{opacity:.88}
+.btn{width:100%;padding:.85rem;border-radius:12px;border:none;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn-sky{background:var(--sky);color:#fff}.btn-sky:hover{background:var(--sky2)}
+.btn-outline{background:transparent;border:1.5px solid var(--border2);color:var(--text2)}.btn-outline:hover{border-color:var(--sky);color:var(--sky)}
+.btn-rose{background:var(--rose);color:#fff}.btn-rose:hover{opacity:.88}
 .btn-sm{padding:.55rem 1rem;width:auto;font-size:.85rem;border-radius:9px}
 
 /* FORMS */
@@ -114,86 +68,38 @@ body{
 .form-header{text-align:center;margin-bottom:1.5rem}
 .form-header h2{font-size:1.15rem;font-weight:700}
 .form-header p{font-size:.85rem;color:var(--text2);margin-top:.3rem}
-
 .form-group{margin-bottom:1.1rem}
 .form-label{font-size:.82rem;font-weight:600;color:var(--text2);margin-bottom:.45rem;display:block}
-.form-input{
-  width:100%;padding:.7rem .9rem;border:1.5px solid var(--border);
-  border-radius:10px;font-size:.92rem;font-family:inherit;
-  background:var(--bg2);color:var(--text);transition:border-color .2s;outline:none;
-}
+.form-input{width:100%;padding:.7rem .9rem;border:1.5px solid var(--border);border-radius:10px;font-size:.92rem;font-family:inherit;background:var(--bg2);color:var(--text);transition:border-color .2s;outline:none}
 .form-input:focus{border-color:var(--sky)}
 textarea.form-input{resize:vertical;min-height:90px}
-
 .attend-btns{display:flex;gap:.6rem}
-.attend-btn{
-  flex:1;padding:.65rem .5rem;border-radius:10px;
-  border:1.5px solid var(--border);background:var(--bg2);
-  font-size:.88rem;font-weight:500;cursor:pointer;transition:all .2s;
-  font-family:inherit;color:var(--text2);
-}
+.attend-btn{flex:1;padding:.65rem .5rem;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);font-size:.88rem;font-weight:500;cursor:pointer;transition:all .2s;font-family:inherit;color:var(--text2)}
 .attend-btn.sel-yes{border-color:var(--green);background:var(--green-light);color:var(--green);font-weight:700}
 .attend-btn.sel-no{border-color:var(--rose);background:var(--rose-light);color:var(--rose);font-weight:700}
 .attend-btn.sel-maybe{border-color:var(--sky);background:var(--sky-light);color:var(--sky);font-weight:700}
 .attend-btn.sel-sky{border-color:var(--sky);background:var(--sky-light);color:var(--sky);font-weight:700}
-
 .count-row{display:flex;align-items:center;gap:.75rem}
-.count-btn{
-  width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);
-  background:var(--bg2);font-size:1.1rem;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-weight:600;
-  transition:border-color .2s;
-}
+.count-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:var(--bg2);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:600;transition:border-color .2s}
 .count-btn:hover{border-color:var(--sky);color:var(--sky)}
 .count-val{font-size:1.1rem;font-weight:700;min-width:28px;text-align:center}
-
-/* REL CHIPS */
 .rel-chips{display:flex;flex-wrap:wrap;gap:.5rem}
-.rel-chip{
-  padding:.35rem .85rem;border-radius:100px;
-  border:1.5px solid var(--border);background:var(--bg2);
-  font-size:.82rem;cursor:pointer;transition:all .2s;color:var(--text2);
-}
+.rel-chip{padding:.35rem .85rem;border-radius:100px;border:1.5px solid var(--border);background:var(--bg2);font-size:.82rem;cursor:pointer;transition:all .2s;color:var(--text2)}
 .rel-chip.sel{border-color:var(--sky);background:var(--sky-light);color:var(--sky);font-weight:600}
+.guide-box{background:var(--sky-light);border:1px solid var(--sky-border);border-radius:10px;padding:.75rem 1rem;margin-top:.6rem;font-size:.82rem;color:#1e5a78;line-height:1.6}
 
-.guide-box{
-  background:var(--sky-light);border:1px solid var(--sky-border);
-  border-radius:10px;padding:.75rem 1rem;margin-top:.6rem;
-  font-size:.82rem;color:#1e5a78;line-height:1.6;
-}
-
-/* MESSAGE BOOK */
-.book-header{
-  padding:1.5rem 1.25rem 1rem;text-align:center;
-  background:linear-gradient(180deg,var(--sky-light) 0%,var(--bg) 100%);
-}
+/* BOOK */
+.book-header{padding:1.5rem 1.25rem 1rem;text-align:center;background:linear-gradient(180deg,var(--sky-light) 0%,var(--bg) 100%)}
 .book-header h2{font-size:1.15rem;font-weight:700}
 .book-header p{font-size:.83rem;color:var(--text2);margin-top:.3rem}
-
 .filter-row{display:flex;gap:.5rem;padding:.75rem 1.25rem;overflow-x:auto;-webkit-overflow-scrolling:touch}
-.filter-chip{
-  flex-shrink:0;padding:.35rem .9rem;border-radius:100px;
-  border:1.5px solid var(--border);background:var(--bg2);
-  font-size:.8rem;cursor:pointer;transition:all .2s;white-space:nowrap;color:var(--text2);
-}
+.filter-chip{flex-shrink:0;padding:.35rem .9rem;border-radius:100px;border:1.5px solid var(--border);background:var(--bg2);font-size:.8rem;cursor:pointer;transition:all .2s;white-space:nowrap;color:var(--text2)}
 .filter-chip.active{border-color:var(--sky);background:var(--sky-light);color:var(--sky);font-weight:600}
-
 .msg-grid{padding:.5rem 1.25rem;display:flex;flex-direction:column;gap:.9rem}
-.msg-card{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:var(--radius);padding:1.1rem 1.2rem;
-  position:relative;overflow:hidden;
-}
-.msg-card::before{
-  content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
-  background:var(--sky);
-}
+.msg-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.2rem;position:relative;overflow:hidden}
+.msg-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--sky)}
 .msg-top{display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem}
-.msg-avatar{
-  width:36px;height:36px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:.85rem;font-weight:700;flex-shrink:0;
-}
+.msg-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;flex-shrink:0}
 .msg-name{font-size:.92rem;font-weight:600}
 .msg-rel{font-size:.75rem;color:var(--text3);margin-top:.05rem}
 .msg-title{font-size:.88rem;font-weight:600;color:var(--sky);margin-bottom:.4rem}
@@ -202,77 +108,36 @@ textarea.form-input{resize:vertical;min-height:90px}
 /* ADMIN */
 .admin-section{padding:1.25rem}
 .admin-stats{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.25rem}
-.stat-card{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:12px;padding:1rem;text-align:center;
-}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center}
 .stat-card .num{font-size:1.8rem;font-weight:700;color:var(--sky)}
 .stat-card .lbl{font-size:.75rem;color:var(--text3);margin-top:.15rem}
-
-.admin-card{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:var(--radius);margin-bottom:1rem;overflow:hidden;
-}
-.admin-card-header{
-  padding:.85rem 1.1rem;border-bottom:1px solid var(--border);
-  display:flex;justify-content:space-between;align-items:center;
-}
+.admin-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1rem;overflow:hidden}
+.admin-card-header{padding:.85rem 1.1rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 .admin-card-header h3{font-size:.95rem;font-weight:700}
 .badge{padding:.2rem .6rem;border-radius:6px;font-size:.75rem;font-weight:600}
 .badge-green{background:var(--green-light);color:var(--green)}
 .badge-rose{background:var(--rose-light);color:var(--rose)}
 .badge-sky{background:var(--sky-light);color:var(--sky)}
-
-.rsvp-row{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:.75rem 1.1rem;font-size:.88rem;
-}
+.rsvp-row{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.1rem;font-size:.88rem}
 .rsvp-row+.rsvp-row{border-top:1px solid var(--border)}
 .rsvp-name{font-weight:600}
 .rsvp-detail{font-size:.78rem;color:var(--text3);margin-top:.1rem}
 
-/* SUCCESS */
 .success-screen{text-align:center;padding:3rem 2rem}
 .success-screen .icon{font-size:3rem;margin-bottom:1rem}
 .success-screen h3{font-size:1.15rem;font-weight:700;margin-bottom:.5rem}
 .success-screen p{font-size:.88rem;color:var(--text2);line-height:1.75}
 .success-btns{display:flex;flex-direction:column;gap:.6rem;margin-top:1.5rem}
-
-/* LOADING */
 .loading{text-align:center;padding:2.5rem;color:var(--text3);font-size:.88rem}
-
-/* TOAST */
-.toast{
-  position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);
-  background:#1c2d38;color:#fff;padding:.7rem 1.4rem;
-  border-radius:100px;font-size:.85rem;opacity:0;transition:all .3s;z-index:200;
-  white-space:nowrap;pointer-events:none;
-}
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:#1c2d38;color:#fff;padding:.7rem 1.4rem;border-radius:100px;font-size:.85rem;opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* HERO IMAGE PREVIEW */
-.hero-preview-wrap{
-  margin-top:.6rem;border-radius:10px;overflow:hidden;
-  position:relative;border:1px solid var(--border);
-}
+.hero-preview-wrap{margin-top:.6rem;border-radius:10px;overflow:hidden;position:relative;border:1px solid var(--border)}
 .hero-preview-wrap img{width:100%;height:130px;object-fit:cover;display:block}
-.hero-preview-wrap .remove-btn{
-  position:absolute;top:.4rem;right:.4rem;
-  background:rgba(0,0,0,0.55);color:#fff;border:none;
-  border-radius:6px;padding:.2rem .6rem;font-size:.78rem;cursor:pointer;
-}
-
-/* NOTICE BOX */
-.notice-box{
-  background:#fffbea;border:1px solid #f0d060;
-  border-radius:10px;padding:.75rem 1rem;margin-bottom:1rem;
-  font-size:.82rem;color:#7a5a00;line-height:1.6;
-}
+.hero-preview-wrap .remove-btn{position:absolute;top:.4rem;right:.4rem;background:rgba(0,0,0,0.55);color:#fff;border:none;border-radius:6px;padding:.2rem .6rem;font-size:.78rem;cursor:pointer}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav class="top-nav">
   <div class="nav-logo">🎊 이종열님 환갑잔치</div>
   <div class="nav-tabs">
@@ -283,15 +148,14 @@ textarea.form-input{resize:vertical;min-height:90px}
     <button class="nav-tab" onclick="showScreen('admin')">관리</button>
   </div>
 </nav>
-
 <div class="toast" id="toast"></div>
 
 <!-- ─── 초대장 ─── -->
 <div id="screen-invite" class="screen active">
   <div class="container">
     <div class="hero-photo">
-      <div class="hero-bg" id="hero-bg"></div>
-      <img class="hero-bg-img" id="hero-bg-img" alt="이종열님">
+      <div class="hero-bg" id="hero-bg" style="display:none"></div>
+      <img class="hero-bg-img" id="hero-bg-img" alt="이종열님" style="display:block">
       <div class="hero-overlay"></div>
       <div class="hero-inner">
         <div class="hero-name">이종열님의 환갑잔치</div>
@@ -320,20 +184,6 @@ textarea.form-input{resize:vertical;min-height:90px}
             <div class="info-val">경기도 하남시 미사동로 38 한채당</div>
           </div>
         </div>
-        <div class="info-row">
-          <div class="info-icon">📞</div>
-          <div>
-            <div class="info-label">문의 (딸 이승지, 이유지)</div>
-            <div class="info-val">010-6791-9125</div>
-          </div>
-        </div>
-        <div class="info-row">
-          <div class="info-icon">📌</div>
-          <div>
-            <div class="info-label">참석 응답 마감</div>
-            <div class="info-val">2026년 06월 20일까지</div>
-          </div>
-        </div>
       </div>
 
       <div class="divider">초대장 안내</div>
@@ -356,12 +206,10 @@ textarea.form-input{resize:vertical;min-height:90px}
           <h2>참석 여부 남기기</h2>
           <p>이종열님의 환갑 행사에 오실 수 있나요?</p>
         </div>
-
         <div class="form-group">
           <label class="form-label">이름 *</label>
           <input class="form-input" id="rsvp-name" type="text" placeholder="홍길동">
         </div>
-
         <div class="form-group">
           <label class="form-label">참석 여부 *</label>
           <div class="attend-btns">
@@ -370,7 +218,6 @@ textarea.form-input{resize:vertical;min-height:90px}
             <button class="attend-btn" id="btn-maybe" onclick="setAttend('maybe')">🤔 미정</button>
           </div>
         </div>
-
         <div class="form-group">
           <label class="form-label">동반 인원 (본인 포함)</label>
           <div class="count-row">
@@ -380,26 +227,21 @@ textarea.form-input{resize:vertical;min-height:90px}
             <span style="font-size:.82rem;color:var(--text3)">명</span>
           </div>
         </div>
-
         <div class="form-group">
           <label class="form-label">연락처 (선택)</label>
           <input class="form-input" id="rsvp-phone" type="tel" placeholder="010-0000-0000">
         </div>
-
         <div class="form-group">
           <label class="form-label">요청사항 (알레르기, 유아 식사 등)</label>
           <input class="form-input" id="rsvp-request" type="text" placeholder="특별한 요청이 있으시면 입력해 주세요">
         </div>
-
         <div class="form-group">
           <label class="form-label">축하 한마디</label>
           <input class="form-input" id="rsvp-short" type="text" placeholder="짧은 축하 메시지를 남겨주세요">
         </div>
-
         <button class="btn btn-sky" onclick="submitRsvp()" id="rsvp-submit-btn" style="margin-top:.5rem">응답 제출하기</button>
       </div>
     </div>
-
     <div id="rsvp-success" class="success-screen" style="display:none">
       <div class="icon">🎉</div>
       <h3>응답이 전달되었습니다!</h3>
@@ -421,12 +263,10 @@ textarea.form-input{resize:vertical;min-height:90px}
           <h2>축하 메시지 남기기</h2>
           <p>이종열님께 마음을 담은 메시지를 전해드려요.</p>
         </div>
-
         <div class="form-group">
           <label class="form-label">이름 *</label>
           <input class="form-input" id="msg-name" type="text" placeholder="홍길동">
         </div>
-
         <div class="form-group">
           <label class="form-label">주인공과의 관계 *</label>
           <div class="rel-chips" id="rel-chips">
@@ -438,20 +278,15 @@ textarea.form-input{resize:vertical;min-height:90px}
             <div class="rel-chip" onclick="setRel(this,'지인')">지인</div>
           </div>
         </div>
-
         <div class="form-group">
           <label class="form-label">메시지 제목</label>
           <input class="form-input" id="msg-title" type="text" placeholder="아버지께, 사랑하는 오빠에게 등">
         </div>
-
         <div class="form-group">
           <label class="form-label">축하 메시지 *</label>
           <textarea class="form-input" id="msg-body" rows="5" placeholder="메시지를 자유롭게 작성해 주세요..." oninput="updateGuide()"></textarea>
-          <div class="guide-box" id="msg-guide">
-            💙 함께한 추억이나 감사했던 순간을 적어주세요.
-          </div>
+          <div class="guide-box" id="msg-guide">💙 함께한 추억이나 감사했던 순간을 적어주세요.</div>
         </div>
-
         <div class="form-group">
           <label class="form-label">메시지북 공개 여부</label>
           <div class="attend-btns" style="gap:.5rem">
@@ -459,11 +294,9 @@ textarea.form-input{resize:vertical;min-height:90px}
             <button class="attend-btn" id="pub-no" onclick="setPub(false)" style="flex:none;padding:.55rem 1.2rem">🔒 비공개</button>
           </div>
         </div>
-
         <button class="btn btn-rose" onclick="submitMsg()" id="msg-submit-btn" style="margin-top:.5rem">💌 마음 남기기</button>
       </div>
     </div>
-
     <div id="msg-success" class="success-screen" style="display:none">
       <div class="icon">💖</div>
       <h3>메시지가 전달되었습니다</h3>
@@ -504,31 +337,19 @@ textarea.form-input{resize:vertical;min-height:90px}
         <h2>관리자 화면</h2>
         <p style="font-size:.83rem;color:var(--text2)">이종열 님 환갑 — 행사 현황 요약</p>
       </div>
-
-      <div id="db-notice" class="notice-box" style="display:none">
-        ⚠️ 현재 데모 모드입니다. 실제 데이터 저장을 위해서는 Supabase 연동이 필요합니다.<br>
-        아래 가이드를 참고해 index.html의 SUPABASE_URL과 SUPABASE_ANON_KEY를 입력해 주세요.
-      </div>
-
       <div class="admin-stats">
-        <div class="stat-card"><div class="num" id="stat-total">-</div><div class="lbl">총 응답자</div></div>
-        <div class="stat-card"><div class="num" id="stat-yes">-</div><div class="lbl">참석 예정</div></div>
-        <div class="stat-card"><div class="num" id="stat-people">-</div><div class="lbl">총 예상 인원</div></div>
-        <div class="stat-card"><div class="num" id="stat-msgs">-</div><div class="lbl">축하 메시지</div></div>
+        <div class="stat-card"><div class="num" id="stat-total">0</div><div class="lbl">총 응답자</div></div>
+        <div class="stat-card"><div class="num" id="stat-yes">0</div><div class="lbl">참석 예정</div></div>
+        <div class="stat-card"><div class="num" id="stat-people">0</div><div class="lbl">총 예상 인원</div></div>
+        <div class="stat-card"><div class="num" id="stat-msgs">0</div><div class="lbl">축하 메시지</div></div>
       </div>
 
-      <!-- 배경 사진 업로드 -->
       <div class="admin-card">
-        <div class="admin-card-header">
-          <h3>초대장 배경 사진</h3>
-        </div>
+        <div class="admin-card-header"><h3>초대장 배경 사진</h3></div>
         <div style="padding:1rem 1.1rem">
-          <p style="font-size:.83rem;color:var(--text2);margin-bottom:.75rem">
-            주인공 사진을 업로드하면 초대장 상단 배경에 표시됩니다.<br>
-            <span style="font-size:.78rem;color:var(--text3)">※ 사진은 이 기기에만 저장됩니다.</span>
-          </p>
+          <p style="font-size:.83rem;color:var(--text2);margin-bottom:.75rem">주인공 사진을 업로드하면 초대장 상단 배경에 표시됩니다.</p>
           <input type="file" id="hero-file" accept="image/*" onchange="handleHeroImage(event)" style="display:none">
-          <button class="btn btn-outline" onclick="document.getElementById('hero-file').click()">📷 사진 선택하기</button>
+          <button class="btn btn-outline" onclick="document.getElementById('hero-file').click()">📷 사진 교체하기</button>
           <div id="hero-preview" style="display:none;margin-top:.75rem">
             <div class="hero-preview-wrap">
               <img id="hero-preview-img" alt="배경 미리보기">
@@ -539,16 +360,12 @@ textarea.form-input{resize:vertical;min-height:90px}
       </div>
 
       <div class="admin-card">
-        <div class="admin-card-header">
-          <h3>참석자 목록</h3>
-        </div>
-        <div id="rsvp-list"><div class="loading">불러오는 중...</div></div>
+        <div class="admin-card-header"><h3>참석자 목록</h3></div>
+        <div id="rsvp-list"><div class="loading">아직 응답이 없습니다</div></div>
       </div>
 
       <div class="admin-card">
-        <div class="admin-card-header">
-          <h3>행사 관리</h3>
-        </div>
+        <div class="admin-card-header"><h3>행사 관리</h3></div>
         <div style="padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.6rem">
           <button class="btn btn-outline" onclick="copyLink()">🔗 초대장 링크 복사</button>
           <button class="btn btn-sky" onclick="showScreen('book')">📖 메시지북 보기</button>
@@ -559,332 +376,160 @@ textarea.form-input{resize:vertical;min-height:90px}
 </div>
 
 <script>
-// ────────────────────────────────────────
-//  Supabase 설정
-//  아래 두 줄을 Supabase에서 받은 값으로 교체하세요
-// ────────────────────────────────────────
-const SUPABASE_URL      = 'YOUR_SUPABASE_URL';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
-
-const isDbReady = !SUPABASE_URL.startsWith('YOUR_');
-let db = null;
-
-if (isDbReady && typeof supabase !== 'undefined') {
-  db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-}
-
-// ── 샘플 데이터 (DB 미설정 시 표시) ──
-const sampleRsvps = [
-  { name:'김유진', attend:'yes',   count:2, short_message:'아버지 생신 축하해요!' },
-  { name:'이민수', attend:'yes',   count:3, short_message:'건강하게 오래오래 사세요' },
-  { name:'박정희', attend:'no',    count:0, short_message:'참석 못해 너무 아쉬워요' },
-  { name:'김태영', attend:'maybe', count:1, short_message:'꼭 가고 싶어요!' },
-];
-const sampleMsgs = [
-  { name:'김유진', rel:'자녀',     title:'아버지, 환갑 축하해요 🎉', body:'아버지가 항상 우리 곁에서 따뜻하게 보살펴줘서 정말 감사해요. 60년의 인생을 당당하고 아름답게 살아온 아버지가 너무 자랑스러워요. 앞으로도 건강하고 행복하게 지내세요!', is_public:true },
-  { name:'이민수', rel:'친구',     title:'종열아, 환갑 축하한다!',   body:'우리가 어느새 이 나이가 됐구나. 앞으로도 맛있는 거 먹고 좋은 곳 다니면서 건강하게 지내자. 늘 응원하고 사랑해!', is_public:true },
-  { name:'박정희', rel:'형제·자매',title:'오빠 사랑해요',            body:'어릴 때부터 지금까지 언제나 든든하게 살아준 오빠에게 감사해요. 환갑을 맞아 더욱 건강하고 행복한 날들이 가득하길 바랍니다.', is_public:true },
-];
-
 // ── 상태 ──
-let attendState   = '';
-let countVal      = 1;
-let selectedRel   = '';
-let isPublic      = true;
-let currentFilter = 'all';
+let attendState='', countVal=1, selectedRel='', isPublic=true, currentFilter='all';
+const rsvps=[], msgs=[];
+const avatarColors=['#4EAAD4','#c0696a','#3a7d44','#6b7db3','#a07040','#7a5a9a'];
 
-const avatarColors = ['#4EAAD4','#c0696a','#3a7d44','#6b7db3','#a07040','#7a5a9a'];
+// 샘플 메시지
+const sampleMsgs=[
+  {name:'이승지',rel:'자녀',title:'아버지, 환갑 축하해요 🎉',body:'아버지가 항상 우리 곁에서 따뜻하게 보살펴줘서 정말 감사해요. 60년의 인생을 당당하고 아름답게 살아온 아버지가 너무 자랑스러워요. 앞으로도 건강하고 행복하게 지내세요!',is_public:true},
+  {name:'이유지',rel:'자녀',title:'아빠 사랑해요 💙',body:'파리에서 멋있게 찍힌 아빠 사진처럼, 앞으로의 인생도 그렇게 여유롭고 멋지게 즐기셨으면 해요. 환갑 진심으로 축하드려요!',is_public:true},
+  {name:'김민준',rel:'친구',title:'종열아, 환갑 축하한다!',body:'우리가 어느새 이 나이가 됐구나. 앞으로도 맛있는 거 먹고 좋은 곳 다니면서 건강하게 지내자. 늘 응원하고 사랑해!',is_public:true},
+];
 
-// ── XSS 방지 ──
-function esc(s) {
-  return String(s ?? '')
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
-// ── 화면 전환 ──
-function showScreen(name) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  const names = ['invite','rsvp','message','book','admin'];
-  document.querySelectorAll('.nav-tab').forEach((t, i) => {
-    t.classList.toggle('active', names[i] === name);
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  ['invite','rsvp','message','book','admin'].forEach((n,i)=>{
+    document.querySelectorAll('.nav-tab')[i].classList.toggle('active',n===name);
   });
-  document.getElementById('screen-' + name).classList.add('active');
-  if (name === 'book')  renderBook();
-  if (name === 'admin') renderAdmin();
-  window.scrollTo(0, 0);
+  document.getElementById('screen-'+name).classList.add('active');
+  if(name==='book') renderBook();
+  if(name==='admin') renderAdmin();
+  window.scrollTo(0,0);
 }
 
-// ── 토스트 ──
-function showMsg(txt) {
-  const t = document.getElementById('toast');
-  t.textContent = txt;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
+function showMsg(txt){
+  const t=document.getElementById('toast');
+  t.textContent=txt;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
 }
 
-// ── 링크 복사 ──
-function copyLink() {
+function copyLink(){
   navigator.clipboard.writeText(location.href)
-    .then(() => showMsg('링크가 복사되었습니다 📋'))
-    .catch(() => { prompt('아래 링크를 복사해 공유하세요:', location.href); });
+    .then(()=>showMsg('링크가 복사되었습니다 📋'))
+    .catch(()=>{prompt('아래 링크를 복사해 공유하세요:',location.href)});
 }
 
-// ── RSVP ──
-function setAttend(val) {
-  attendState = val;
-  ['yes','no','maybe'].forEach(v => {
-    document.getElementById('btn-' + v).className =
-      'attend-btn' + (v === val ? ' sel-' + v : '');
+// RSVP
+function setAttend(val){
+  attendState=val;
+  ['yes','no','maybe'].forEach(v=>{
+    document.getElementById('btn-'+v).className='attend-btn'+(v===val?' sel-'+v:'');
   });
 }
-
-function changeCount(d) {
-  countVal = Math.max(0, countVal + d);
-  document.getElementById('count-val').textContent = countVal;
+function changeCount(d){countVal=Math.max(0,countVal+d);document.getElementById('count-val').textContent=countVal}
+function submitRsvp(){
+  const name=document.getElementById('rsvp-name').value.trim();
+  if(!name){showMsg('이름을 입력해 주세요');return}
+  if(!attendState){showMsg('참석 여부를 선택해 주세요');return}
+  rsvps.unshift({name,attend:attendState,count:countVal,short_message:document.getElementById('rsvp-short').value.trim()});
+  document.getElementById('rsvp-form-wrap').style.display='none';
+  document.getElementById('rsvp-success').style.display='block';
 }
 
-async function submitRsvp() {
-  const name = document.getElementById('rsvp-name').value.trim();
-  if (!name)        { showMsg('이름을 입력해 주세요'); return; }
-  if (!attendState) { showMsg('참석 여부를 선택해 주세요'); return; }
-
-  const btn = document.getElementById('rsvp-submit-btn');
-  btn.textContent = '제출 중...';
-  btn.disabled = true;
-
-  const payload = {
-    name,
-    attend:        attendState,
-    count:         countVal,
-    phone:         document.getElementById('rsvp-phone').value.trim(),
-    short_message: document.getElementById('rsvp-short').value.trim(),
-    request:       document.getElementById('rsvp-request').value.trim(),
-  };
-
-  if (isDbReady && db) {
-    const { error } = await db.from('rsvps').insert([payload]);
-    if (error) {
-      showMsg('저장 중 오류가 발생했습니다. 다시 시도해 주세요.');
-      btn.textContent = '응답 제출하기';
-      btn.disabled = false;
-      return;
-    }
-  } else {
-    sampleRsvps.unshift(payload);
-  }
-
-  document.getElementById('rsvp-form-wrap').style.display = 'none';
-  document.getElementById('rsvp-success').style.display   = 'block';
+// MESSAGE
+function setRel(el,rel){
+  selectedRel=rel;
+  document.querySelectorAll('.rel-chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');updateGuide();
+}
+function updateGuide(){
+  const g={자녀:'💙 함께한 추억이나 감사했던 순간을 적어주세요.',배우자:'💑 함께해온 소중한 날들을 떠올리며 적어주세요.','형제·자매':'👫 함께 자라온 추억을 담아 적어주세요.',친척:'🏡 가족으로서 전하고 싶은 따뜻한 말을 남겨주세요.',친구:'😊 오래 기억에 남는 일이나 축하의 마음을 적어주세요.',지인:'🌿 환갑을 맞은 분께 전하고 싶은 따뜻한 말을 남겨주세요.'};
+  document.getElementById('msg-guide').textContent=g[selectedRel]??'💙 마음을 담아 자유롭게 적어주세요.';
+}
+function setPub(v){
+  isPublic=v;
+  document.getElementById('pub-yes').className='attend-btn'+(v?' sel-sky':'');
+  document.getElementById('pub-no').className='attend-btn'+(!v?' sel-no':'');
+}
+function submitMsg(){
+  const name=document.getElementById('msg-name').value.trim();
+  const body=document.getElementById('msg-body').value.trim();
+  if(!name){showMsg('이름을 입력해 주세요');return}
+  if(!selectedRel){showMsg('관계를 선택해 주세요');return}
+  if(!body){showMsg('메시지를 입력해 주세요');return}
+  msgs.unshift({name,rel:selectedRel,title:document.getElementById('msg-title').value.trim()||`${name}님의 축하 메시지`,body,is_public:isPublic});
+  document.getElementById('msg-form-wrap').style.display='none';
+  document.getElementById('msg-success').style.display='block';
 }
 
-// ── MESSAGE ──
-function setRel(el, rel) {
-  selectedRel = rel;
-  document.querySelectorAll('.rel-chip').forEach(c => c.classList.remove('sel'));
-  el.classList.add('sel');
-  updateGuide();
-}
-
-function updateGuide() {
-  const guides = {
-    '자녀':    '💙 함께한 추억이나 감사했던 순간을 적어주세요.',
-    '배우자':  '💑 함께해온 소중한 날들을 떠올리며 적어주세요.',
-    '형제·자매':'👫 함께 자라온 추억을 담아 적어주세요.',
-    '친척':    '🏡 가족으로서 전하고 싶은 따뜻한 말을 남겨주세요.',
-    '친구':    '😊 오래 기억에 남는 일이나 축하의 마음을 적어주세요.',
-    '지인':    '🌿 환갑을 맞은 분께 전하고 싶은 따뜻한 말을 남겨주세요.',
-  };
-  document.getElementById('msg-guide').textContent =
-    guides[selectedRel] ?? '💙 마음을 담아 자유롭게 적어주세요.';
-}
-
-function setPub(v) {
-  isPublic = v;
-  document.getElementById('pub-yes').className = 'attend-btn' + (v  ? ' sel-sky' : '');
-  document.getElementById('pub-no').className  = 'attend-btn' + (!v ? ' sel-no'  : '');
-}
-
-async function submitMsg() {
-  const name = document.getElementById('msg-name').value.trim();
-  const body = document.getElementById('msg-body').value.trim();
-  if (!name)        { showMsg('이름을 입력해 주세요'); return; }
-  if (!selectedRel) { showMsg('관계를 선택해 주세요'); return; }
-  if (!body)        { showMsg('메시지를 입력해 주세요'); return; }
-
-  const btn = document.getElementById('msg-submit-btn');
-  btn.textContent = '전달 중...';
-  btn.disabled = true;
-
-  const payload = {
-    name,
-    rel:       selectedRel,
-    title:     document.getElementById('msg-title').value.trim() || `${name}님의 축하 메시지`,
-    body,
-    is_public: isPublic,
-  };
-
-  if (isDbReady && db) {
-    const { error } = await db.from('messages').insert([payload]);
-    if (error) {
-      showMsg('저장 중 오류가 발생했습니다. 다시 시도해 주세요.');
-      btn.textContent = '💌 마음 남기기';
-      btn.disabled = false;
-      return;
-    }
-  } else {
-    sampleMsgs.unshift(payload);
-  }
-
-  document.getElementById('msg-form-wrap').style.display = 'none';
-  document.getElementById('msg-success').style.display   = 'block';
-}
-
-// ── BOOK ──
-async function renderBook(filter) {
-  filter = filter ?? currentFilter;
-  const grid = document.getElementById('msg-grid');
-  grid.innerHTML = '<div class="loading">불러오는 중...</div>';
-
-  let rows = [];
-
-  if (isDbReady && db) {
-    let q = db.from('messages').select('*').eq('is_public', true)
-              .order('created_at', { ascending: false });
-    if (filter !== 'all') q = q.eq('rel', filter);
-    const { data, error } = await q;
-    if (!error) rows = data ?? [];
-
-    const { count } = await db.from('messages').select('id', { count:'exact', head:true })
-                               .eq('is_public', true);
-    document.getElementById('msg-count').textContent = count ?? 0;
-  } else {
-    rows = sampleMsgs.filter(m => m.is_public && (filter === 'all' || m.rel === filter));
-    document.getElementById('msg-count').textContent =
-      sampleMsgs.filter(m => m.is_public).length;
-  }
-
-  if (!rows.length) {
-    grid.innerHTML = '<div style="text-align:center;padding:2.5rem;color:var(--text3);font-size:.9rem">아직 해당 메시지가 없습니다</div>';
-    return;
-  }
-
-  grid.innerHTML = rows.map((m, i) => {
-    const col = avatarColors[i % avatarColors.length];
+// BOOK
+function renderBook(filter){
+  filter=filter??currentFilter;
+  const allMsgs=[...msgs,...sampleMsgs];
+  const pub=allMsgs.filter(m=>m.is_public&&(filter==='all'||m.rel===filter));
+  document.getElementById('msg-count').textContent=allMsgs.filter(m=>m.is_public).length;
+  const grid=document.getElementById('msg-grid');
+  grid.innerHTML=pub.length?pub.map((m,i)=>{
+    const col=avatarColors[i%avatarColors.length];
     return `<div class="msg-card">
       <div class="msg-top">
         <div class="msg-avatar" style="background:${col}22;color:${col}">${esc(m.name.slice(-2))}</div>
-        <div>
-          <div class="msg-name">${esc(m.name)}</div>
-          <div class="msg-rel">${esc(m.rel)}</div>
-        </div>
+        <div><div class="msg-name">${esc(m.name)}</div><div class="msg-rel">${esc(m.rel)}</div></div>
       </div>
       <div class="msg-title">${esc(m.title)}</div>
       <div class="msg-body">${esc(m.body)}</div>
     </div>`;
-  }).join('');
+  }).join(''):'<div style="text-align:center;padding:2.5rem;color:var(--text3);font-size:.9rem">아직 해당 메시지가 없습니다</div>';
+}
+function filterMsgs(rel,el){
+  currentFilter=rel;
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');renderBook(rel);
 }
 
-function filterMsgs(rel, el) {
-  currentFilter = rel;
-  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  renderBook(rel);
-}
-
-// ── ADMIN ──
-async function renderAdmin() {
-  if (!isDbReady) {
-    document.getElementById('db-notice').style.display = 'block';
-  }
-
-  let allRsvps = [];
-  let allMsgs  = [];
-
-  if (isDbReady && db) {
-    const { data: r } = await db.from('rsvps').select('*').order('created_at', { ascending: false });
-    const { data: m } = await db.from('messages').select('*').order('created_at', { ascending: false });
-    allRsvps = r ?? [];
-    allMsgs  = m ?? [];
-  } else {
-    allRsvps = [...sampleRsvps];
-    allMsgs  = [...sampleMsgs];
-  }
-
-  document.getElementById('stat-total').textContent  = allRsvps.length;
-  document.getElementById('stat-yes').textContent    = allRsvps.filter(r => r.attend === 'yes').length;
-  document.getElementById('stat-people').textContent = allRsvps.filter(r => r.attend === 'yes')
-                                                               .reduce((s, r) => s + (r.count ?? 1), 0);
-  document.getElementById('stat-msgs').textContent   = allMsgs.length;
-
-  const statusMap = {
-    yes:   '<span class="badge badge-green">참석</span>',
-    no:    '<span class="badge badge-rose">불참</span>',
-    maybe: '<span class="badge badge-sky">미정</span>',
-  };
-
-  const list = document.getElementById('rsvp-list');
-  if (!allRsvps.length) {
-    list.innerHTML = '<div style="padding:1.25rem;text-align:center;color:var(--text3);font-size:.88rem">아직 응답이 없습니다</div>';
-    return;
-  }
-
-  list.innerHTML = allRsvps.map(r => `
+// ADMIN
+function renderAdmin(){
+  const all=[...rsvps];
+  document.getElementById('stat-total').textContent=all.length;
+  document.getElementById('stat-yes').textContent=all.filter(r=>r.attend==='yes').length;
+  document.getElementById('stat-people').textContent=all.filter(r=>r.attend==='yes').reduce((s,r)=>s+(r.count??1),0);
+  document.getElementById('stat-msgs').textContent=msgs.length+sampleMsgs.length;
+  const map={yes:'<span class="badge badge-green">참석</span>',no:'<span class="badge badge-rose">불참</span>',maybe:'<span class="badge badge-sky">미정</span>'};
+  document.getElementById('rsvp-list').innerHTML=all.length?all.map(r=>`
     <div class="rsvp-row">
-      <div>
-        <div class="rsvp-name">${esc(r.name)}</div>
-        <div class="rsvp-detail">${r.attend === 'yes' ? (r.count ?? 1) + '명 · ' : ''}${esc(r.short_message ?? '')}</div>
-      </div>
-      ${statusMap[r.attend] ?? ''}
-    </div>`).join('');
+      <div><div class="rsvp-name">${esc(r.name)}</div><div class="rsvp-detail">${r.attend==='yes'?(r.count??1)+'명 · ':''}"${esc(r.short_message??'')}"</div></div>
+      ${map[r.attend]??''}
+    </div>`).join(''):'<div style="padding:1.25rem;text-align:center;color:var(--text3);font-size:.88rem">아직 응답이 없습니다</div>';
 }
 
-// ── 배경 이미지 ──
-function handleHeroImage(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    const src = ev.target.result;
-    try { localStorage.setItem('heroImage', src); } catch (_) {}
+// 배경 이미지
+function handleHeroImage(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const src=ev.target.result;
+    try{localStorage.setItem('heroImage',src)}catch(_){}
     applyHeroImage(src);
-    document.getElementById('hero-preview-img').src = src;
-    document.getElementById('hero-preview').style.display = 'block';
+    document.getElementById('hero-preview-img').src=src;
+    document.getElementById('hero-preview').style.display='block';
   };
   reader.readAsDataURL(file);
 }
-
-function applyHeroImage(src) {
-  const bg  = document.getElementById('hero-bg');
-  const img = document.getElementById('hero-bg-img');
-  if (src) {
-    img.src = src;
-    img.style.display = 'block';
-    bg.style.display  = 'none';
-  } else {
-    img.style.display = 'none';
-    bg.style.display  = 'block';
-  }
+function applyHeroImage(src){
+  const bg=document.getElementById('hero-bg'),img=document.getElementById('hero-bg-img');
+  if(src){img.src=src;img.style.display='block';bg.style.display='none'}
+  else{img.style.display='none';bg.style.display='block'}
+}
+function removeHeroImage(){
+  localStorage.removeItem('heroImage');applyHeroImage(null);
+  document.getElementById('hero-preview').style.display='none';
+  document.getElementById('hero-file').value='';
 }
 
-function removeHeroImage() {
-  localStorage.removeItem('heroImage');
-  applyHeroImage(null);
-  document.getElementById('hero-preview').style.display = 'none';
-  document.getElementById('hero-file').value = '';
-}
-
-// ── 초기화 ──
-window.addEventListener('load', () => {
-  try {
-    const saved = localStorage.getItem('heroImage');
-    if (saved) {
+// 초기화 — localStorage 저장된 사진 복원
+window.addEventListener('load',()=>{
+  try{
+    const saved=localStorage.getItem('heroImage');
+    if(saved){
       applyHeroImage(saved);
-      document.getElementById('hero-preview-img').src = saved;
-      document.getElementById('hero-preview').style.display = 'block';
+      document.getElementById('hero-preview-img').src=saved;
+      document.getElementById('hero-preview').style.display='block';
     }
-  } catch (_) {}
-
+  }catch(_){}
   renderBook();
 });
 </script>
