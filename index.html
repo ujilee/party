@@ -154,8 +154,8 @@ textarea.form-input{resize:vertical;min-height:90px}
 <div id="screen-invite" class="screen active">
   <div class="container">
     <div class="hero-photo">
-      <div class="hero-bg" id="hero-bg"></div>
-      <img class="hero-bg-img" id="hero-bg-img" alt="">
+      <div class="hero-bg" id="hero-bg" style="display:none"></div>
+      <img class="hero-bg-img" id="hero-bg-img" alt="이종열님" style="display:block">
       <div class="hero-overlay"></div>
       <div class="hero-inner">
         <div class="hero-name">이종열님의 환갑잔치</div>
@@ -182,20 +182,6 @@ textarea.form-input{resize:vertical;min-height:90px}
           <div>
             <div class="info-label">장소</div>
             <div class="info-val">경기도 하남시 미사동로 38 한채당</div>
-          </div>
-        </div>
-        <div class="info-row">
-          <div class="info-icon">📞</div>
-          <div>
-            <div class="info-label">문의 (딸 이승지, 이유지)</div>
-            <div class="info-val">010-6791-9125</div>
-          </div>
-        </div>
-        <div class="info-row">
-          <div class="info-icon">📌</div>
-          <div>
-            <div class="info-label">참석 응답 마감</div>
-            <div class="info-val">2026년 06월 20일까지</div>
           </div>
         </div>
       </div>
@@ -349,7 +335,7 @@ textarea.form-input{resize:vertical;min-height:90px}
     <div class="admin-section">
       <div class="form-header" style="text-align:left;margin-bottom:1.25rem">
         <h2>관리자 화면</h2>
-        <p style="font-size:.83rem;color:var(--text2)">이종열 님 환갑 — 행사 현황 요약</p>
+        <p style="font-size:.83rem;color:var(--text2)">이종열 님환갑 — 행사 현황 요약</p>
       </div>
       <div class="admin-stats">
         <div class="stat-card"><div class="num" id="stat-total">0</div><div class="lbl">총 응답자</div></div>
@@ -361,12 +347,9 @@ textarea.form-input{resize:vertical;min-height:90px}
       <div class="admin-card">
         <div class="admin-card-header"><h3>초대장 배경 사진</h3></div>
         <div style="padding:1rem 1.1rem">
-          <p style="font-size:.83rem;color:var(--text2);margin-bottom:.75rem">
-            사진을 선택하면 초대장 상단 배경에 바로 표시됩니다.<br>
-            <span style="font-size:.78rem;color:var(--text3)">※ 이 기기 브라우저에만 저장됩니다.</span>
-          </p>
+          <p style="font-size:.83rem;color:var(--text2);margin-bottom:.75rem">주인공 사진을 업로드하면 초대장 상단 배경에 표시됩니다.</p>
           <input type="file" id="hero-file" accept="image/*" onchange="handleHeroImage(event)" style="display:none">
-          <button class="btn btn-outline" onclick="document.getElementById('hero-file').click()">📷 사진 선택하기</button>
+          <button class="btn btn-outline" onclick="document.getElementById('hero-file').click()">📷 사진 교체하기</button>
           <div id="hero-preview" style="display:none;margin-top:.75rem">
             <div class="hero-preview-wrap">
               <img id="hero-preview-img" alt="배경 미리보기">
@@ -394,9 +377,8 @@ textarea.form-input{resize:vertical;min-height:90px}
 
 <script>
 // ────────────────────────────────────────
-//  배경 사진 설정 (모든 방문자에게 보이게 하려면)
-//  1. 사진 파일을 index.html과 같은 폴더에 넣기
-//  2. 아래 파일명을 입력하고 GitHub에 함께 올리기
+//  배경 사진을 모든 방문자에게 보이게 하려면:
+//  사진 파일을 같은 폴더에 넣고 파일명 입력
 //  예: const HERO_IMAGE = 'photo.jpg';
 // ────────────────────────────────────────
 const HERO_IMAGE = '';
@@ -406,6 +388,7 @@ let attendState='', countVal=1, selectedRel='', isPublic=true, currentFilter='al
 const rsvps=[], msgs=[];
 const avatarColors=['#4EAAD4','#c0696a','#3a7d44','#6b7db3','#a07040','#7a5a9a'];
 
+// 샘플 메시지
 const sampleMsgs=[
   {name:'이승지',rel:'자녀',title:'아버지, 환갑 축하해요 🎉',body:'아버지가 항상 우리 곁에서 따뜻하게 보살펴줘서 정말 감사해요. 60년의 인생을 당당하고 아름답게 살아온 아버지가 너무 자랑스러워요. 앞으로도 건강하고 행복하게 지내세요!',is_public:true},
   {name:'이유지',rel:'자녀',title:'아빠 사랑해요 💙',body:'파리에서 멋있게 찍힌 아빠 사진처럼, 앞으로의 인생도 그렇게 여유롭고 멋지게 즐기셨으면 해요. 환갑 진심으로 축하드려요!',is_public:true},
@@ -436,3 +419,132 @@ function copyLink(){
     .then(()=>showMsg('링크가 복사되었습니다 📋'))
     .catch(()=>{prompt('아래 링크를 복사해 공유하세요:',location.href)});
 }
+
+// RSVP
+function setAttend(val){
+  attendState=val;
+  ['yes','no','maybe'].forEach(v=>{
+    document.getElementById('btn-'+v).className='attend-btn'+(v===val?' sel-'+v:'');
+  });
+}
+function changeCount(d){countVal=Math.max(0,countVal+d);document.getElementById('count-val').textContent=countVal}
+function submitRsvp(){
+  const name=document.getElementById('rsvp-name').value.trim();
+  if(!name){showMsg('이름을 입력해 주세요');return}
+  if(!attendState){showMsg('참석 여부를 선택해 주세요');return}
+  rsvps.unshift({name,attend:attendState,count:countVal,short_message:document.getElementById('rsvp-short').value.trim()});
+  document.getElementById('rsvp-form-wrap').style.display='none';
+  document.getElementById('rsvp-success').style.display='block';
+}
+
+// MESSAGE
+function setRel(el,rel){
+  selectedRel=rel;
+  document.querySelectorAll('.rel-chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');updateGuide();
+}
+function updateGuide(){
+  const g={자녀:'💙 함께한 추억이나 감사했던 순간을 적어주세요.',배우자:'💑 함께해온 소중한 날들을 떠올리며 적어주세요.','형제·자매':'👫 함께 자라온 추억을 담아 적어주세요.',친척:'🏡 가족으로서 전하고 싶은 따뜻한 말을 남겨주세요.',친구:'😊 오래 기억에 남는 일이나 축하의 마음을 적어주세요.',지인:'🌿 환갑을 맞은 분께 전하고 싶은 따뜻한 말을 남겨주세요.'};
+  document.getElementById('msg-guide').textContent=g[selectedRel]??'💙 마음을 담아 자유롭게 적어주세요.';
+}
+function setPub(v){
+  isPublic=v;
+  document.getElementById('pub-yes').className='attend-btn'+(v?' sel-sky':'');
+  document.getElementById('pub-no').className='attend-btn'+(!v?' sel-no':'');
+}
+function submitMsg(){
+  const name=document.getElementById('msg-name').value.trim();
+  const body=document.getElementById('msg-body').value.trim();
+  if(!name){showMsg('이름을 입력해 주세요');return}
+  if(!selectedRel){showMsg('관계를 선택해 주세요');return}
+  if(!body){showMsg('메시지를 입력해 주세요');return}
+  msgs.unshift({name,rel:selectedRel,title:document.getElementById('msg-title').value.trim()||`${name}님의 축하 메시지`,body,is_public:isPublic});
+  document.getElementById('msg-form-wrap').style.display='none';
+  document.getElementById('msg-success').style.display='block';
+}
+
+// BOOK
+function renderBook(filter){
+  filter=filter??currentFilter;
+  const allMsgs=[...msgs,...sampleMsgs];
+  const pub=allMsgs.filter(m=>m.is_public&&(filter==='all'||m.rel===filter));
+  document.getElementById('msg-count').textContent=allMsgs.filter(m=>m.is_public).length;
+  const grid=document.getElementById('msg-grid');
+  grid.innerHTML=pub.length?pub.map((m,i)=>{
+    const col=avatarColors[i%avatarColors.length];
+    return `<div class="msg-card">
+      <div class="msg-top">
+        <div class="msg-avatar" style="background:${col}22;color:${col}">${esc(m.name.slice(-2))}</div>
+        <div><div class="msg-name">${esc(m.name)}</div><div class="msg-rel">${esc(m.rel)}</div></div>
+      </div>
+      <div class="msg-title">${esc(m.title)}</div>
+      <div class="msg-body">${esc(m.body)}</div>
+    </div>`;
+  }).join(''):'<div style="text-align:center;padding:2.5rem;color:var(--text3);font-size:.9rem">아직 해당 메시지가 없습니다</div>';
+}
+function filterMsgs(rel,el){
+  currentFilter=rel;
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');renderBook(rel);
+}
+
+// ADMIN
+function renderAdmin(){
+  const all=[...rsvps];
+  document.getElementById('stat-total').textContent=all.length;
+  document.getElementById('stat-yes').textContent=all.filter(r=>r.attend==='yes').length;
+  document.getElementById('stat-people').textContent=all.filter(r=>r.attend==='yes').reduce((s,r)=>s+(r.count??1),0);
+  document.getElementById('stat-msgs').textContent=msgs.length+sampleMsgs.length;
+  const map={yes:'<span class="badge badge-green">참석</span>',no:'<span class="badge badge-rose">불참</span>',maybe:'<span class="badge badge-sky">미정</span>'};
+  document.getElementById('rsvp-list').innerHTML=all.length?all.map(r=>`
+    <div class="rsvp-row">
+      <div><div class="rsvp-name">${esc(r.name)}</div><div class="rsvp-detail">${r.attend==='yes'?(r.count??1)+'명 · ':''}"${esc(r.short_message??'')}"</div></div>
+      ${map[r.attend]??''}
+    </div>`).join(''):'<div style="padding:1.25rem;text-align:center;color:var(--text3);font-size:.88rem">아직 응답이 없습니다</div>';
+}
+
+// 배경 이미지
+function handleHeroImage(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const src=ev.target.result;
+    try{localStorage.setItem('heroImage',src)}catch(_){}
+    applyHeroImage(src);
+    document.getElementById('hero-preview-img').src=src;
+    document.getElementById('hero-preview').style.display='block';
+  };
+  reader.readAsDataURL(file);
+}
+function applyHeroImage(src){
+  const bg=document.getElementById('hero-bg'),img=document.getElementById('hero-bg-img');
+  if(src){img.src=src;img.style.display='block';bg.style.display='none'}
+  else{img.style.display='none';bg.style.display='block'}
+}
+function removeHeroImage(){
+  localStorage.removeItem('heroImage');applyHeroImage(null);
+  document.getElementById('hero-preview').style.display='none';
+  document.getElementById('hero-file').value='';
+}
+
+// 초기화 — localStorage 저장된 사진 복원
+window.addEventListener('load',()=>{
+  // 1순위: HERO_IMAGE 상수 (GitHub 배포용)
+  if(HERO_IMAGE){
+    applyHeroImage(HERO_IMAGE);
+  } else {
+    // 2순위: 관리자에서 업로드한 사진 (localStorage)
+    try{
+      const saved=localStorage.getItem('heroImage');
+      if(saved){
+        applyHeroImage(saved);
+        document.getElementById('hero-preview-img').src=saved;
+        document.getElementById('hero-preview').style.display='block';
+      }
+    }catch(_){}
+  }
+  renderBook();
+});
+</script>
+</body>
+</html>
