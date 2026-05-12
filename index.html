@@ -16,18 +16,12 @@
   --radius:14px;
 }
 html{scroll-behavior:smooth}
-body{font-family:'Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
 .screen{display:none;animation:fadeIn .3s ease}
 .screen.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-.top-nav{
-  position:sticky;top:0;z-index:50;
-  background:rgba(242,242,242,0.94);backdrop-filter:blur(10px);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:.75rem 1.25rem;
-}
+.top-nav{position:sticky;top:0;z-index:50;background:rgba(242,242,242,0.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.25rem}
 .nav-logo{font-size:.95rem;font-weight:700;color:var(--sky);letter-spacing:-.01em;white-space:nowrap}
 .nav-tabs{display:flex;gap:4px}
 .nav-tab{padding:.35rem .65rem;border-radius:8px;border:none;background:transparent;font-size:.78rem;color:var(--text2);cursor:pointer;transition:background .2s,color .2s}
@@ -48,20 +42,22 @@ body{font-family:'Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var
 .invite-title{text-align:center;margin-bottom:1.25rem}
 .invite-title h2{font-size:1.2rem;font-weight:700;color:var(--text);line-height:1.4}
 .invite-title p{font-size:.88rem;color:var(--text2);margin-top:.5rem;line-height:1.75}
+
+/* 수정: info-box 간격 */
 .info-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.25rem;margin-bottom:1rem}
-.info-row{display:flex;align-items:flex-start;gap:.75rem;padding:.5rem 0}
+.info-row{display:flex;align-items:center;gap:1rem;padding:.9rem .25rem}
 .info-row+.info-row{border-top:1px solid var(--border)}
-.info-icon{font-size:1.1rem;margin-top:.1rem;flex-shrink:0}
-.info-label{font-size:.75rem;color:var(--text3);margin-bottom:.15rem}
-.info-val{font-size:.9rem;font-weight:500;color:var(--text)}
+.info-icon{font-size:1.4rem;flex-shrink:0;width:28px;text-align:center}
+.info-text{display:flex;flex-direction:column;gap:.2rem}
+.info-label{font-size:.88rem;font-weight:700;color:var(--text)}
+.info-val{font-size:.9rem;font-weight:400;color:var(--text)}
+
 .divider{display:flex;align-items:center;gap:.75rem;margin:1.25rem 0;color:var(--text3);font-size:.78rem}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
 .action-btns{display:flex;flex-direction:column;gap:.6rem}
 .btn{width:100%;padding:.85rem;border-radius:12px;border:none;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
 .btn-sky{background:var(--sky);color:#fff}.btn-sky:hover{background:var(--sky2)}
 .btn-outline{background:transparent;border:1.5px solid var(--border2);color:var(--text2)}.btn-outline:hover{border-color:var(--sky);color:var(--sky)}
-.btn-rose{background:var(--rose);color:#fff}.btn-rose:hover{opacity:.88}
-.btn-sm{padding:.55rem 1rem;width:auto;font-size:.85rem;border-radius:9px}
 
 /* FORMS */
 .form-section{padding:1.25rem}
@@ -78,7 +74,6 @@ textarea.form-input{resize:vertical;min-height:90px}
 .attend-btn.sel-yes{border-color:var(--green);background:var(--green-light);color:var(--green);font-weight:700}
 .attend-btn.sel-no{border-color:var(--rose);background:var(--rose-light);color:var(--rose);font-weight:700}
 .attend-btn.sel-maybe{border-color:var(--sky);background:var(--sky-light);color:var(--sky);font-weight:700}
-.attend-btn.sel-sky{border-color:var(--sky);background:var(--sky-light);color:var(--sky);font-weight:700}
 .count-row{display:flex;align-items:center;gap:.75rem}
 .count-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:var(--bg2);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:600;transition:border-color .2s}
 .count-btn:hover{border-color:var(--sky);color:var(--sky)}
@@ -105,35 +100,13 @@ textarea.form-input{resize:vertical;min-height:90px}
 .msg-title{font-size:.88rem;font-weight:600;color:var(--sky);margin-bottom:.4rem}
 .msg-body{font-size:.88rem;color:var(--text2);line-height:1.75}
 
-/* ADMIN */
-.admin-section{padding:1.25rem}
-.admin-stats{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.25rem}
-.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center}
-.stat-card .num{font-size:1.8rem;font-weight:700;color:var(--sky)}
-.stat-card .lbl{font-size:.75rem;color:var(--text3);margin-top:.15rem}
-.admin-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1rem;overflow:hidden}
-.admin-card-header{padding:.85rem 1.1rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.admin-card-header h3{font-size:.95rem;font-weight:700}
-.badge{padding:.2rem .6rem;border-radius:6px;font-size:.75rem;font-weight:600}
-.badge-green{background:var(--green-light);color:var(--green)}
-.badge-rose{background:var(--rose-light);color:var(--rose)}
-.badge-sky{background:var(--sky-light);color:var(--sky)}
-.rsvp-row{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.1rem;font-size:.88rem}
-.rsvp-row+.rsvp-row{border-top:1px solid var(--border)}
-.rsvp-name{font-weight:600}
-.rsvp-detail{font-size:.78rem;color:var(--text3);margin-top:.1rem}
-
 .success-screen{text-align:center;padding:3rem 2rem}
 .success-screen .icon{font-size:3rem;margin-bottom:1rem}
 .success-screen h3{font-size:1.15rem;font-weight:700;margin-bottom:.5rem}
 .success-screen p{font-size:.88rem;color:var(--text2);line-height:1.75}
 .success-btns{display:flex;flex-direction:column;gap:.6rem;margin-top:1.5rem}
-.loading{text-align:center;padding:2.5rem;color:var(--text3);font-size:.88rem}
 .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:#1c2d38;color:#fff;padding:.7rem 1.4rem;border-radius:100px;font-size:.85rem;opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.hero-preview-wrap{margin-top:.6rem;border-radius:10px;overflow:hidden;position:relative;border:1px solid var(--border)}
-.hero-preview-wrap img{width:100%;height:130px;object-fit:cover;display:block}
-.hero-preview-wrap .remove-btn{position:absolute;top:.4rem;right:.4rem;background:rgba(0,0,0,0.55);color:#fff;border:none;border-radius:6px;padding:.2rem .6rem;font-size:.78rem;cursor:pointer}
 </style>
 </head>
 <body>
@@ -145,7 +118,6 @@ textarea.form-input{resize:vertical;min-height:90px}
     <button class="nav-tab" onclick="showScreen('rsvp')">참석</button>
     <button class="nav-tab" onclick="showScreen('message')">메시지</button>
     <button class="nav-tab" onclick="showScreen('book')">메시지북</button>
-
   </div>
 </nav>
 <div class="toast" id="toast"></div>
@@ -163,78 +135,23 @@ textarea.form-input{resize:vertical;min-height:90px}
       </div>
     </div>
 
-    <div class="invite-body">
-      <div class="invite-title">
-        <h2>이종열님의 60번째 생일을<br>함께 축하해 주세요</h2>
-        <p>가족의 마음을 담아 작은 자리를 마련했습니다.<br>따뜻한 축하 한마디를 남겨주세요</br></p>
-.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center}
-.stat-card .num{font-size:1.8rem;font-weight:700;color:var(--sky)}
-.stat-card .lbl{font-size:.75rem;color:var(--text3);margin-top:.15rem}
-.admin-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1rem;overflow:hidden}
-.admin-card-header{padding:.85rem 1.1rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.admin-card-header h3{font-size:.95rem;font-weight:700}
-.badge{padding:.2rem .6rem;border-radius:6px;font-size:.75rem;font-weight:600}
-.badge-green{background:var(--green-light);color:var(--green)}
-.badge-rose{background:var(--rose-light);color:var(--rose)}
-.badge-sky{background:var(--sky-light);color:var(--sky)}
-.rsvp-row{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.1rem;font-size:.88rem}
-.rsvp-row+.rsvp-row{border-top:1px solid var(--border)}
-.rsvp-name{font-weight:600}
-.rsvp-detail{font-size:.78rem;color:var(--text3);margin-top:.1rem}
-
-.success-screen{text-align:center;padding:3rem 2rem}
-.success-screen .icon{font-size:3rem;margin-bottom:1rem}
-.success-screen h3{font-size:1.15rem;font-weight:700;margin-bottom:.5rem}
-.success-screen p{font-size:.88rem;color:var(--text2);line-height:1.75}
-.success-btns{display:flex;flex-direction:column;gap:.6rem;margin-top:1.5rem}
-.loading{text-align:center;padding:2.5rem;color:var(--text3);font-size:.88rem}
-.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:#1c2d38;color:#fff;padding:.7rem 1.4rem;border-radius:100px;font-size:.85rem;opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.hero-preview-wrap{margin-top:.6rem;border-radius:10px;overflow:hidden;position:relative;border:1px solid var(--border)}
-.hero-preview-wrap img{width:100%;height:130px;object-fit:cover;display:block}
-.hero-preview-wrap .remove-btn{position:absolute;top:.4rem;right:.4rem;background:rgba(0,0,0,0.55);color:#fff;border:none;border-radius:6px;padding:.2rem .6rem;font-size:.78rem;cursor:pointer}
-</style>
-</head>
-<body>
-
-<nav class="top-nav">
-  <div class="nav-logo">🎊 이종열님의 환갑잔치</div>
-  <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showScreen('invite')">초대장</button>
-    <button class="nav-tab" onclick="showScreen('rsvp')">참석</button>
-    <button class="nav-tab" onclick="showScreen('message')">메시지</button>
-    <button class="nav-tab" onclick="showScreen('book')">메시지북</button>
-
-  </div>
-</nav>
-<div class="toast" id="toast"></div>
-
-<!-- ─── 초대장 ─── -->
-<div id="screen-invite" class="screen active">
-  <div class="container">
-    <div class="hero-photo">
-      <div class="hero-bg" id="hero-bg"></div>
-      <img class="hero-bg-img" id="hero-bg-img" alt="">
-      <div class="hero-overlay"></div>
-      <div class="hero-inner">
-        <div class="hero-name">이종열님의 환갑잔치</div>
-        <div class="hero-sub">60번째 생일을 함께 축하합니다</div>
-      </div>
-    </div>
     <div class="invite-body">
       <div class="invite-title">
         <h2>이종열님의 60번째 생일을<br>함께 축하해 주세요</h2>
         <p>가족의 마음을 담아 작은 자리를 마련했습니다.<br>따뜻한 축하 한마디를 남겨주세요.</p>
+      </div>
+
       <div class="info-box">
         <div class="info-row">
           <div class="info-icon">📅</div>
+          <div class="info-text">
             <div class="info-label">날짜 및 시간</div>
             <div class="info-val">2026년 06월 27일(토) 오전 11시</div>
           </div>
         </div>
         <div class="info-row">
           <div class="info-icon">📍</div>
-          <div>
+          <div class="info-text">
             <div class="info-label">장소</div>
             <div class="info-val">경기도 하남시 미사동로 38 한채당</div>
           </div>
@@ -294,7 +211,7 @@ textarea.form-input{resize:vertical;min-height:90px}
       <h3>응답이 전달되었습니다!</h3>
       <p>소중한 응답 감사합니다.<br>따뜻한 축하 메시지도 남겨주시겠어요?</p>
       <div class="success-btns">
-        <button class="btn btn-rose" onclick="showScreen('message')">💌 축하 메시지도 남기기</button>
+        <button class="btn btn-sky" onclick="showScreen('message')">💌 축하 메시지도 남기기</button>
         <button class="btn btn-outline" onclick="showScreen('invite')">초대장으로 돌아가기</button>
       </div>
     </div>
@@ -334,7 +251,8 @@ textarea.form-input{resize:vertical;min-height:90px}
           <textarea class="form-input" id="msg-body" rows="5" placeholder="메시지를 자유롭게 작성해 주세요..." oninput="updateGuide()"></textarea>
           <div class="guide-box" id="msg-guide">💙 함께한 추억이나 감사했던 순간을 적어주세요.</div>
         </div>
-        <button class="btn btn-rose" onclick="submitMsg()" id="msg-submit-btn" style="margin-top:.5rem">💌 마음 남기기</button>
+        <!-- 수정: btn-rose → btn-sky -->
+        <button class="btn btn-sky" onclick="submitMsg()" id="msg-submit-btn" style="margin-top:.5rem">💌 마음 남기기</button>
       </div>
     </div>
     <div id="msg-success" class="success-screen" style="display:none">
@@ -369,20 +287,13 @@ textarea.form-input{resize:vertical;min-height:90px}
   </div>
 </div>
 
-
-
 <script>
-// ────────────────────────────────────────
-//  배경 사진을 모든 방문자에게 보이게 하려면:
-//  사진 파일을 같은 폴더에 넣고 파일명 입력
-//  예: const HERO_IMAGE = 'photo.jpg';
-// ────────────────────────────────────────
-const HERO_IMAGE = 'image.jpg';
+const HERO_IMAGE = 'IMG_0974.JPG';
 
-// ── 상태 ──
-let attendState='', countVal=1, selectedRel='', isPublic=true, currentFilter='all';
+let attendState='', countVal=1, selectedRel='', currentFilter='all';
 const rsvps=[], msgs=[];
 const avatarColors=['#4EAAD4','#c0696a','#3a7d44','#6b7db3','#a07040','#7a5a9a'];
+
 
 function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
@@ -393,7 +304,6 @@ function showScreen(name){
   });
   document.getElementById('screen-'+name).classList.add('active');
   if(name==='book') renderBook();
-  if(name==='admin') renderAdmin();
   window.scrollTo(0,0);
 }
 
@@ -405,11 +315,10 @@ function showMsg(txt){
 
 function copyLink(){
   navigator.clipboard.writeText(location.href)
-    .then(()=>showMsg('링크가 복사되었습니다 📋'))
+    .then(()=>showMsg('링크가 복사되었습니다.'))
     .catch(()=>{prompt('아래 링크를 복사해 공유하세요:',location.href)});
 }
 
-// RSVP
 function setAttend(val){
   attendState=val;
   ['yes','no','maybe'].forEach(v=>{
@@ -426,7 +335,6 @@ function submitRsvp(){
   document.getElementById('rsvp-success').style.display='block';
 }
 
-// MESSAGE
 function setRel(el,rel){
   selectedRel=rel;
   document.querySelectorAll('.rel-chip').forEach(c=>c.classList.remove('sel'));
@@ -436,23 +344,17 @@ function updateGuide(){
   const g={자녀:'💙 함께한 추억이나 감사했던 순간을 적어주세요.',배우자:'💑 함께해온 소중한 날들을 떠올리며 적어주세요.','형제·자매':'👫 함께 자라온 추억을 담아 적어주세요.',친척:'🏡 가족으로서 전하고 싶은 따뜻한 말을 남겨주세요.',친구:'😊 오래 기억에 남는 일이나 축하의 마음을 적어주세요.',지인:'🌿 환갑을 맞은 분께 전하고 싶은 따뜻한 말을 남겨주세요.'};
   document.getElementById('msg-guide').textContent=g[selectedRel]??'💙 마음을 담아 자유롭게 적어주세요.';
 }
-function setPub(v){
-  isPublic=v;
-  document.getElementById('pub-yes').className='attend-btn'+(v?' sel-sky':'');
-  document.getElementById('pub-no').className='attend-btn'+(!v?' sel-no':'');
-}
 function submitMsg(){
   const name=document.getElementById('msg-name').value.trim();
   const body=document.getElementById('msg-body').value.trim();
   if(!name){showMsg('이름을 입력해 주세요');return}
   if(!selectedRel){showMsg('관계를 선택해 주세요');return}
   if(!body){showMsg('메시지를 입력해 주세요');return}
-  msgs.unshift({name,rel:selectedRel,title:document.getElementById('msg-title').value.trim()||`${name}님의 축하 메시지`,body,is_public:isPublic});
+  msgs.unshift({name,rel:selectedRel,title:document.getElementById('msg-title').value.trim()||`${name}님의 축하 메시지`,body,is_public:true});
   document.getElementById('msg-form-wrap').style.display='none';
   document.getElementById('msg-success').style.display='block';
 }
 
-// BOOK
 function renderBook(filter){
   filter=filter??currentFilter;
   const allMsgs=[...msgs,...sampleMsgs];
@@ -477,59 +379,19 @@ function filterMsgs(rel,el){
   el.classList.add('active');renderBook(rel);
 }
 
-// ADMIN
-function renderAdmin(){
-  const all=[...rsvps];
-  document.getElementById('stat-total').textContent=all.length;
-  document.getElementById('stat-yes').textContent=all.filter(r=>r.attend==='yes').length;
-  document.getElementById('stat-people').textContent=all.filter(r=>r.attend==='yes').reduce((s,r)=>s+(r.count??1),0);
-  document.getElementById('stat-msgs').textContent=msgs.length+sampleMsgs.length;
-  const map={yes:'<span class="badge badge-green">참석</span>',no:'<span class="badge badge-rose">불참</span>',maybe:'<span class="badge badge-sky">미정</span>'};
-  document.getElementById('rsvp-list').innerHTML=all.length?all.map(r=>`
-    <div class="rsvp-row">
-      <div><div class="rsvp-name">${esc(r.name)}</div><div class="rsvp-detail">${r.attend==='yes'?(r.count??1)+'명 · ':''}"${esc(r.short_message??'')}"</div></div>
-      ${map[r.attend]??''}
-    </div>`).join(''):'<div style="padding:1.25rem;text-align:center;color:var(--text3);font-size:.88rem">아직 응답이 없습니다</div>';
-}
-
-// 배경 이미지
-function handleHeroImage(e){
-  const file=e.target.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    const src=ev.target.result;
-    try{localStorage.setItem('heroImage',src)}catch(_){}
-    applyHeroImage(src);
-    document.getElementById('hero-preview-img').src=src;
-    document.getElementById('hero-preview').style.display='block';
-  };
-  reader.readAsDataURL(file);
-}
 function applyHeroImage(src){
   const bg=document.getElementById('hero-bg'),img=document.getElementById('hero-bg-img');
   if(src){img.src=src;img.style.display='block';bg.style.display='none'}
   else{img.style.display='none';bg.style.display='block'}
 }
-function removeHeroImage(){
-  localStorage.removeItem('heroImage');applyHeroImage(null);
-  document.getElementById('hero-preview').style.display='none';
-  document.getElementById('hero-file').value='';
-}
 
-// 초기화 — localStorage 저장된 사진 복원
 window.addEventListener('load',()=>{
-  // 1순위: HERO_IMAGE 상수 (GitHub 배포용)
   if(HERO_IMAGE){
     applyHeroImage(HERO_IMAGE);
   } else {
-    // 2순위: 관리자에서 업로드한 사진 (localStorage)
     try{
       const saved=localStorage.getItem('heroImage');
-      if(saved){
-        applyHeroImage(saved);
-        document.getElementById('hero-preview-img').src=saved;
-        document.getElementById('hero-preview').style.display='block';
-      }
+      if(saved) applyHeroImage(saved);
     }catch(_){}
   }
   renderBook();
