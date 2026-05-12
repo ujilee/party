@@ -16,7 +16,7 @@
   --radius:14px;
 }
 html{scroll-behavior:smooth}
-body{font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+body{font-family:'Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
 .screen{display:none;animation:fadeIn .3s ease}
 .screen.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -166,7 +166,65 @@ textarea.form-input{resize:vertical;min-height:90px}
     <div class="invite-body">
       <div class="invite-title">
         <h2>이종열님의 60번째 생일을<br>함께 축하해 주세요</h2>
-        <p>가족의 마음을 담아 작은 자리를 마련했습니다.<br>참석 여부와 따뜻한 축하 한마디를 남겨주시면<br>큰 기쁨이 됩니다.</p>
+        <p>가족의 마음을 담아 작은 자리를 마련했습니다.<br>따뜻한 축하 한마디를 남겨주세요.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center}
+.stat-card .num{font-size:1.8rem;font-weight:700;color:var(--sky)}
+.stat-card .lbl{font-size:.75rem;color:var(--text3);margin-top:.15rem}
+.admin-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1rem;overflow:hidden}
+.admin-card-header{padding:.85rem 1.1rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.admin-card-header h3{font-size:.95rem;font-weight:700}
+.badge{padding:.2rem .6rem;border-radius:6px;font-size:.75rem;font-weight:600}
+.badge-green{background:var(--green-light);color:var(--green)}
+.badge-rose{background:var(--rose-light);color:var(--rose)}
+.badge-sky{background:var(--sky-light);color:var(--sky)}
+.rsvp-row{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.1rem;font-size:.88rem}
+.rsvp-row+.rsvp-row{border-top:1px solid var(--border)}
+.rsvp-name{font-weight:600}
+.rsvp-detail{font-size:.78rem;color:var(--text3);margin-top:.1rem}
+
+.success-screen{text-align:center;padding:3rem 2rem}
+.success-screen .icon{font-size:3rem;margin-bottom:1rem}
+.success-screen h3{font-size:1.15rem;font-weight:700;margin-bottom:.5rem}
+.success-screen p{font-size:.88rem;color:var(--text2);line-height:1.75}
+.success-btns{display:flex;flex-direction:column;gap:.6rem;margin-top:1.5rem}
+.loading{text-align:center;padding:2.5rem;color:var(--text3);font-size:.88rem}
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:#1c2d38;color:#fff;padding:.7rem 1.4rem;border-radius:100px;font-size:.85rem;opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.hero-preview-wrap{margin-top:.6rem;border-radius:10px;overflow:hidden;position:relative;border:1px solid var(--border)}
+.hero-preview-wrap img{width:100%;height:130px;object-fit:cover;display:block}
+.hero-preview-wrap .remove-btn{position:absolute;top:.4rem;right:.4rem;background:rgba(0,0,0,0.55);color:#fff;border:none;border-radius:6px;padding:.2rem .6rem;font-size:.78rem;cursor:pointer}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="nav-logo">🎊 이종열님의 환갑잔치</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showScreen('invite')">초대장</button>
+    <button class="nav-tab" onclick="showScreen('rsvp')">참석</button>
+    <button class="nav-tab" onclick="showScreen('message')">메시지</button>
+    <button class="nav-tab" onclick="showScreen('book')">메시지북</button>
+
+  </div>
+</nav>
+<div class="toast" id="toast"></div>
+
+<!-- ─── 초대장 ─── -->
+<div id="screen-invite" class="screen active">
+  <div class="container">
+    <div class="hero-photo">
+      <div class="hero-bg" id="hero-bg"></div>
+      <img class="hero-bg-img" id="hero-bg-img" alt="">
+      <div class="hero-overlay"></div>
+      <div class="hero-inner">
+        <div class="hero-name">이종열님의 환갑잔치</div>
+        <div class="hero-sub">60번째 생일을 함께 축하합니다</div>
+      </div>
+    </div>
+
+    <div class="invite-body">
+      <div class="invite-title">
+        <h2>이종열님의 60번째 생일을<br>함께 축하해 주세요</h2>
+        <p>가족의 마음을 담아 작은 자리를 마련했습니다.<br>따뜻한 축하 한마디를 남겨주세요.</p>
       </div>
 
       <div class="info-box">
