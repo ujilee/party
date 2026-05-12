@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>아버지의 환갑잔치</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --main:      #C2D7FF;
+      --main-dark: #6E95D4;
+      --main-deep: #2C3E6B;
+      --main-light:#EAF1FF;
+      --bg:        #F2F2F2;
+      --white:     #FFFFFF;
+      --text:      #333333;
+      --text-mid:  #555555;
+      --text-light:#888888;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      font-family:'Noto Sans KR',sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      max-width:480px;
+      margin:0 auto;
+      overflow-x:hidden;
+    }
+
+    /* ── 플로팅 음악 버튼 ── */
+    #musicFloat {
+      position:fixed; bottom:24px; right:20px; z-index:200;
+      background:var(--white); border:1.5px solid var(--main);
+      border-radius:50px; padding:9px 16px;
+      display:flex; align-items:center; gap:8px;
+      cursor:pointer; box-shadow:0 4px 16px rgba(110,149,212,.25);
+      font-size:12px; color:var(--main-deep); font-weight:500;
+      transition:box-shadow .2s;
+    }
+    #musicFloat:hover { box-shadow:0 6px 20px rgba(110,149,212,.4); }
+    .bars { display:flex; gap:2px; align-items:flex-end; height:14px; }
+    .bar  { width:3px; border-radius:2px; background:var(--main-dark); }
+    .bar:nth-child(1){height:5px} .bar:nth-child(2){height:9px}
+    .bar:nth-child(3){height:13px}.bar:nth-child(4){height:7px}
+    .bars.playing .bar:nth-child(1){animation:b1 .7s ease-in-out infinite}
+    .bars.playing .bar:nth-child(2){animation:b2 .7s ease-in-out infinite .1s}
+    .bars.playing .bar:nth-child(3){animation:b3 .7s ease-in-out infinite .2s}
+    .bars.playing .bar:nth-child(4){animation:b4 .7s ease-in-out infinite .15s}
+    @keyframes b1{0%,100%{height:5px}50%{height:13px}}
+    @keyframes b2{0%,100%{height:9px}50%{height:5px}}
+    @keyframes b3{0%,100%{height:13px}50%{height:7px}}
+    @keyframes b4{0%,100%{height:7px}50%{height:12px}}
+
+    /* ── 토스트 ── */
+    #toast {
+      position:fixed; bottom:76px; left:50%;
+      transform:translateX(-50%) translateY(8px);
+      background:rgba(44,62,107,.92); color:#fff;
+      padding:9px 20px; border-radius:50px; font-size:13px;
+      opacity:0; transition:all .3s; z-index:300;
+      white-space:nowrap; pointer-events:none;
+    }
+    #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    /* ── 히어로 ── */
+    .hero {
+      min-height:100svh;
+      background:linear-gradient(170deg,#C2D7FF 0%,#D8E8FF 40%,#EAF1FF 70%,#F2F2F2 100%);
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      padding:60px 28px 80px;
+      position:relative; overflow:hidden; text-align:center;
+    }
+    .hero::before {
+      content:''; position:absolute; top:-80px; right:-80px;
+      width:320px; height:320px; border-radius:50%;
+      background:rgba(194,215,255,.4);
+    }
+    .hero::after {
+      content:''; position:absolute; bottom:-60px; left:-60px;
+      width:240px; height:240px; border-radius:50%;
+      background:rgba(194,215,255,.3);
+    }
+    .hero-badge {
+      font-size:11px; letter-spacing:4px; color:var(--main-dark);
+      font-weight:500; margin-bottom:28px; text-transform:uppercase;
+      position:relative; z-index:1;
+    }
+    .hero-photo {
+      width:180px; height:180px; border-radius:50%;
+      background:linear-gradient(135deg,#B0C9F5,#8BAEE0);
+      border:5px solid var(--white);
+      box-shadow:0 8px 40px rgba(110,149,212,.45);
+      display:flex; align-items:center; justify-content:center;
+      font-size:64px; margin-bottom:36px;
+      position:relative; z-index:1; overflow:hidden;
+    }
+    .hero-photo img{width:100%;height:100%;object-fit:cover}
+    .hero-title {
+      font-family:'Noto Serif KR',serif;
+      font-size:24px; font-weight:600; color:var(--main-deep);
+      line-height:1.75; margin-bottom:16px;
+      position:relative; z-index:1;
+    }
+    .hero-desc {
+      font-size:14px; color:#5A6B8A; line-height:2;
+      margin-bottom:44px; position:relative; z-index:1;
+    }
+    .hero-btns {
+      display:flex; gap:12px; justify-content:center;
+      position:relative; z-index:1;
+    }
+    .btn {
+      padding:13px 22px; border-radius:50px; border:none;
+      cursor:pointer; font-family:'Noto Sans KR',sans-serif;
+      font-size:13px; font-weight:500; transition:all .25s;
+      display:flex; align-items:center; gap:6px;
+    }
+    .btn-solid  { background:var(--main-deep); color:#fff; box-shadow:0 4px 16px rgba(44,62,107,.3); }
+    .btn-outline{ background:var(--white); color:var(--main-deep); border:1.5px solid var(--main); }
+    .btn:hover  { transform:translateY(-2px); box-shadow:0 8px 24px rgba(44,62,107,.2); }
+
+    /* ── 꽃잎 ── */
+    .petal-wrap { position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+    .petal      { position:absolute; top:-10%; opacity:0; animation:falling linear infinite; }
+    @keyframes falling {
+      0%  {opacity:0;transform:translateY(0) rotate(0deg)}
+      10% {opacity:.7}
+      90% {opacity:.4}
+      100%{opacity:0;transform:translateY(110vh) rotate(720deg)}
+    }
+
+    /* ── 공통 섹션 ── */
+    .sec { padding:64px 24px; }
+    .sec-title {
+      font-family:'Noto Serif KR',serif;
+      font-size:20px; font-weight:600;
+      color:var(--main-deep); text-align:center; margin-bottom:6px;
+    }
+    .sec-sub {
+      font-size:13px; color:var(--text-light);
+      text-align:center; margin-bottom:40px; line-height:1.9;
+    }
+    .deco-bar { width:36px; height:2px; background:var(--main); border-radius:2px; margin:0 auto 14px; }
+    .divider  { display:flex; align-items:center; gap:12px; margin:40px 0; }
+    .div-line { flex:1; height:1px; background:linear-gradient(to right,transparent,var(--main),transparent); }
+    .div-dot  { width:6px; height:6px; border-radius:50%; background:var(--main); }
+
+    /* ══════════════════════════════
+       포토 스토리 캐러셀
+    ══════════════════════════════ */
+    .photo-story { background:var(--bg); }
+    .chapter     { margin-bottom:52px; }
+    .chapter-tag {
+      font-size:10px; letter-spacing:3px; color:var(--main-dark);
+      font-weight:500; text-align:center; margin-bottom:18px;
+      text-transform:uppercase;
+    }
+
+    /* 캐러셀 컨테이너: 좌우 패딩 밖으로 빠져나감 */
+    .car-wrap { position:relative; margin:0 -24px; }
+
+    .carousel {
+      display:flex;
+      overflow-x:scroll;
+      scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+      gap:12px;
+      padding:0 24px;
+    }
+    .carousel::-webkit-scrollbar { display:none; }
+
+    /* 슬라이드 1장: 옆 슬라이드가 살짝 보이도록 너비 설정 */
+    .slide {
+      scroll-snap-align:start;
+      flex-shrink:0;
+      width:calc(100% - 52px); /* ~87% → 오른쪽에 다음 슬라이드 살짝 노출 */
+      border-radius:18px;
+      overflow:hidden;
+      aspect-ratio:4/3;
+      background:linear-gradient(135deg,#D1E3FF,#B8CCEE);
+      display:flex; align-items:center; justify-content:center;
+      font-size:44px;
+      position:relative; cursor:pointer;
+      transition:transform .15s, box-shadow .15s;
+      box-shadow:0 4px 16px rgba(110,149,212,.2);
+    }
+    /* 단독 슬라이드(챕터 04)는 전체 너비 */
+    .slide.full { width:calc(100% - 48px); aspect-ratio:16/9; }
+    .slide:active { transform:scale(0.97); }
+    .slide img { width:100%; height:100%; object-fit:cover; }
+
+    .slide-hint {
+      position:absolute; bottom:0; left:0; right:0;
+      padding:20px 12px 8px;
+      background:linear-gradient(transparent,rgba(0,0,0,.25));
+      font-size:10px; color:rgba(255,255,255,.85);
+      text-align:center;
+    }
+
+    /* 마지막 슬라이드 뒤 여백 (끝까지 snap 되도록) */
+    .carousel::after { content:''; flex-shrink:0; width:24px; }
+
+    /* 도트 인디케이터 */
+    .dots { display:flex; justify-content:center; gap:6px; margin-top:14px; padding:0 24px; }
+    .dot  {
+      width:6px; height:6px; border-radius:50%;
+      background:var(--main); opacity:.4;
+      transition:all .3s;
+    }
+    .dot.on { width:18px; border-radius:3px; opacity:1; background:var(--main-dark); }
+
+    /* 챕터 문구 */
+    .chapter-quote {
+      font-family:'Noto Serif KR',serif;
+      font-size:14px; color:var(--text-mid);
+      text-align:center; line-height:2.3;
+      margin:24px 24px 0;
+    }
+
+    /* ── 행사 안내 ── */
+    .event-sec { background:var(--white); }
+    .event-box { background:var(--bg); border-radius:18px; padding:8px 20px; margin-bottom:16px; }
+    .event-row {
+      display:flex; align-items:flex-start;
+      gap:14px; padding:14px 0;
+      border-bottom:1px solid #E8E8E8;
+    }
+    .event-row:last-child { border-bottom:none; }
+    .ev-icon  { font-size:17px; padding-top:1px; flex-shrink:0; }
+    .ev-label { font-size:11px; color:var(--text-light); margin-bottom:4px; }
+    .ev-val   { font-size:14px; font-weight:500; line-height:1.7; }
+    .map-btns { display:flex; flex-direction:column; gap:10px; }
+    .map-btn  {
+      display:flex; align-items:center; justify-content:center;
+      gap:8px; padding:14px; border-radius:14px;
+      border:1.5px solid #E0E0E0; background:var(--white);
+      font-size:14px; font-weight:500; cursor:pointer;
+      text-decoration:none; color:var(--text);
+      font-family:'Noto Sans KR',sans-serif; transition:all .2s;
+    }
+    .map-btn:hover{ border-color:var(--main); background:var(--main-light); }
+    .map-btn.naver{ color:#03C75A; border-color:rgba(3,199,90,.3); }
+    .map-btn.kakao{ background:#FAE100; border-color:#FAE100; color:#3A1D1D; }
+    .map-btn.copy { color:var(--main-deep); border-color:var(--main); }
+
+    /* ── 라이트박스 ── */
+    #lightbox {
+      position:fixed; inset:0; z-index:600;
+      background:rgba(0,0,0,.93);
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      opacity:0; pointer-events:none;
+      transition:opacity .3s;
+    }
+    #lightbox.open { opacity:1; pointer-events:all; }
+
+    #lb-stage {
+      display:flex; align-items:center; justify-content:center;
+      width:100%; height:100%;
+      transition:transform .35s cubic-bezier(.25,.46,.45,.94);
+    }
+
+    #lb-img {
+      max-width:92vw; max-height:78vh;
+      border-radius:14px; object-fit:contain;
+      transform:scale(.9);
+      transition:transform .35s cubic-bezier(.25,.46,.45,.94);
+      font-size:88px; line-height:1;
+      display:flex; align-items:center; justify-content:center;
+    }
+    #lightbox.open #lb-img { transform:scale(1); }
+
+    #lb-close {
+      position:absolute; top:20px; right:20px;
+      color:rgba(255,255,255,.7); font-size:30px;
+      cursor:pointer; line-height:1;
+      background:rgba(255,255,255,.12);
+      border-radius:50%; width:40px; height:40px;
+      display:flex; align-items:center; justify-content:center;
+      transition:background .2s;
+    }
+    #lb-close:hover { background:rgba(255,255,255,.25); }
+
+    /* 라이트박스 좌/우 화살표 */
+    .lb-arrow {
+      position:absolute; top:50%; transform:translateY(-50%);
+      color:rgba(255,255,255,.7); font-size:28px;
+      cursor:pointer; padding:12px;
+      background:rgba(255,255,255,.12); border-radius:50%;
+      transition:background .2s; line-height:1;
+      width:48px; height:48px; display:flex; align-items:center; justify-content:center;
+    }
+    .lb-arrow:hover { background:rgba(255,255,255,.25); }
+    #lb-prev { left:12px; }
+    #lb-next { right:12px; }
+    #lb-counter {
+      position:absolute; bottom:24px;
+      color:rgba(255,255,255,.6); font-size:12px;
+    }
+
+    /* ── 푸터 ── */
+    footer {
+      background:var(--main-deep); color:rgba(255,255,255,.55);
+      text-align:center; padding:40px 24px 48px;
+      font-size:12px; line-height:2;
+    }
+    footer .f-title {
+      font-family:'Noto Serif KR',serif;
+      font-size:16px; color:rgba(255,255,255,.9); margin-bottom:8px;
+    }
+
+    /* ── 스크롤 페이드인 ── */
+    .fade-up {
+      opacity:0; transform:translateY(28px);
+      transition:opacity .7s ease, transform .7s ease;
+    }
+    .fade-up.in { opacity:1; transform:translateY(0); }
+
+    /* ── 슬라이드 진입 시 scale 효과 ── */
+    .slide { transform-origin:center; }
+    .chapter.in .slide { animation:slideIn .5s ease both; }
+    @keyframes slideIn {
+      from{opacity:0;transform:translateX(20px) scale(.96)}
+      to  {opacity:1;transform:translateX(0) scale(1)}
+    }
+  </style>
+</head>
+<body>
+
+<!-- BGM: 같은 폴더에 bgm.mp3 를 넣어주세요 -->
+<audio id="bgm" loop>
+  <source src="bgm.mp3" type="audio/mpeg">
+</audio>
+
+<!-- 플로팅 음악 버튼 -->
+<div id="musicFloat" onclick="toggleMusic()">
+  <div class="bars" id="bars">
+    <div class="bar"></div><div class="bar"></div>
+    <div class="bar"></div><div class="bar"></div>
+  </div>
+  <span id="musicLabel">음악 켜기</span>
+</div>
+
+<div id="toast"></div>
+
+<!-- ════════════════════════════
+     라이트박스
+════════════════════════════ -->
+<div id="lightbox" onclick="lbBgClick(event)">
+  <div id="lb-close" onclick="closeLb()">✕</div>
+  <div id="lb-prev"  class="lb-arrow" onclick="lbMove(-1)">‹</div>
+  <div id="lb-stage">
+    <div id="lb-img"></div>
+  </div>
+  <div id="lb-next"  class="lb-arrow" onclick="lbMove(1)">›</div>
+  <div id="lb-counter"></div>
+</div>
+
+<!-- ════════════════════════════
+     1. 히어로
+════════════════════════════ -->
+<section class="hero">
+  <div class="petal-wrap" id="petalWrap"></div>
+
+  <div class="hero-badge">환갑 초대장 · 2026</div>
+
+  <!--
+    대표 사진: 아래 이모지 대신
+    <img src="대표사진.jpg"> 를 넣어주세요
+  -->
+  <div class="hero-photo">🌸</div>
+
+  <div class="hero-title">
+    아빠의 예순 번째 봄을<br>함께 축하해주세요
+  </div>
+  <div class="hero-desc">
+    가족의 마음을 담아<br>작은 자리를 마련했습니다
+  </div>
+
+  <div class="hero-btns">
+    <button class="btn btn-solid" onclick="toggleMusic()">🎵 음악 켜기</button>
+    <button class="btn btn-outline"
+      onclick="document.getElementById('eventSec').scrollIntoView({behavior:'smooth'})">
+      📋 초대장 보기
+    </button>
+  </div>
+</section>
+
+<!-- ════════════════════════════
+     2. 포토 스토리
+════════════════════════════ -->
+<section class="sec photo-story" id="photoSec">
+  <div class="sec-title fade-up">사진으로 보는 아빠의 이야기</div>
+  <div class="deco-bar fade-up"></div>
+  <div class="sec-sub fade-up">소중한 순간들을 함께 나눕니다</div>
+
+  <!-- ── Chapter 01 ── -->
+  <div class="chapter fade-up" id="ch1">
+    <div class="chapter-tag">Chapter 01 · 젊은 시절</div>
+    <div class="car-wrap">
+      <div class="carousel" id="car-ch1" data-chapter="ch1">
+        <!--
+          사진 교체:
+          <div class="slide" onclick="openLb('ch1',0)">
+            <img src="photo1.jpg">
+          </div>
+        -->
+        <div class="slide" onclick="openLb('ch1',0)">
+          🧑‍💼<div class="slide-hint">사진을 추가하세요</div>
+        </div>
+        <div class="slide" onclick="openLb('ch1',1)">
+          📷<div class="slide-hint">사진을 추가하세요</div>
+        </div>
+        <div class="slide" onclick="openLb('ch1',2)">
+          🎓<div class="slide-hint">사진을 추가하세요</div>
+        </div>
+      </div>
+      <div class="dots" id="dots-ch1"></div>
+    </div>
+    <div class="chapter-quote">
+      청년의 눈빛으로 세상을 향해<br>힘차게 첫 발을 내딛었던 그 시절
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-line"></div><div class="div-dot"></div><div class="div-line"></div></div>
+
+  <!-- ── Chapter 02 ── -->
+  <div class="chapter fade-up" id="ch2">
+    <div class="chapter-tag">Chapter 02 · 가족과 함께한 시간</div>
+    <div class="car-wrap">
+      <div class="carousel" id="car-ch2" data-chapter="ch2">
+        <div class="slide" onclick="openLb('ch2',0)">
+          👨‍👩‍👧‍👦<div class="slide-hint">사진을 추가하세요</div>
+        </div>
+        <div class="slide" onclick="openLb('ch2',1)">
+          🏖️<div class="slide-hint">사진을 추가하세요</div>
+        </div>
+        <div class="slide" onclick="openLb('ch2',2)">
+          🏔️<div class="slide-hint">사진을 추가하세요</div>
+        </div>
+        <div class="slide" onclick="openLb('ch2',3)">
+          🎉<div class="slide-hint">사진을 추가하세요</div>
+        </div>
+      </div>
+      <div class="dots" id="dots-ch2"></div>
+    </div>
+    <div class="chapter-quote">
+      늘 가족의 든든한 버팀목이 되어준 사람<br>
+      조용히 곁을 지켜주고, 묵묵히 사랑을 보여준 아빠
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-line"></div><div class="div-dot"></div><div class="div-line"></div></div>
+
+  <!-- ── Chapter 03 ── -->
+  <div class="chapter fade-up" id="ch3">
+    <div class="chapter-tag">Chapter 03 · 아빠의 일상</div>
+    <div class="car-wrap">
+      <div class="carousel" id="car-ch3" data-chapter="ch3">
+        <div class="slide" onclick="openLb('ch3',0)">
+          ⛳<div class="slide-hint">사진을 추가하세요</div>
+        </div>
+        <div class="slide" onclick="openLb('ch3',1)">
+          🎣<div class="slide-hint">사진을 추가하세요</div>
+        </div>
+        <div class="slide" onclick="openLb('ch3',2)">
+          ✈️<div class="slide-hint">사진을 추가하세요</div>
+        </div>
+      </div>
+      <div class="dots" id="dots-ch3"></div>
+    </div>
+    <div class="chapter-quote">
+      묵묵히 자신의 자리를 지키며<br>
+      소소한 일상을 즐기는 아빠의 모습
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-line"></div><div class="div-dot"></div><div class="div-line"></div></div>
+
+  <!-- ── Chapter 04 (단독 풀 슬라이드) ── -->
+  <div class="chapter fade-up" id="ch4">
+    <div class="chapter-tag">Chapter 04 · 예순의 봄을 맞이하며</div>
+    <div class="car-wrap">
+      <div class="carousel" id="car-ch4" data-chapter="ch4">
+        <div class="slide full" onclick="openLb('ch4',0)">
+          🌸<div class="slide-hint">사진을 추가하세요</div>
+        </div>
+        <div class="slide full" onclick="openLb('ch4',1)">
+          🎂<div class="slide-hint">사진을 추가하세요</div>
+        </div>
+      </div>
+      <div class="dots" id="dots-ch4"></div>
+    </div>
+    <div class="chapter-quote">
+      어느덧 예순이라는 아름다운 시간을 맞이했습니다<br>
+      지금 이 순간, 아빠의 환한 미소가 가장 빛납니다
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════
+     3. 행사 안내
+════════════════════════════ -->
+<section class="sec event-sec" id="eventSec">
+  <div class="sec-title fade-up">행사 안내</div>
+  <div class="deco-bar fade-up"></div>
+  <div class="sec-sub fade-up">아빠의 환갑을 함께 축하해주세요</div>
+
+  <div class="event-box fade-up">
+    <div class="event-row">
+      <div class="ev-icon">📅</div>
+      <div>
+        <div class="ev-label">일시</div>
+        <!-- 날짜·시간 수정 -->
+        <div class="ev-val">2026년 0월 0일 토요일<br>오후 0시</div>
+      </div>
+    </div>
+    <div class="event-row">
+      <div class="ev-icon">🏨</div>
+      <div>
+        <div class="ev-label">장소</div>
+        <!-- 장소명 수정 -->
+        <div class="ev-val">00호텔 00홀</div>
+      </div>
+    </div>
+    <div class="event-row">
+      <div class="ev-icon">📍</div>
+      <div>
+        <div class="ev-label">주소</div>
+        <!-- 주소 수정 (id="addr" 은 복사 기능에 사용) -->
+        <div class="ev-val" id="addr">서울시 00구 00로 00</div>
+      </div>
+    </div>
+    <div class="event-row">
+      <div class="ev-icon">📞</div>
+      <div>
+        <div class="ev-label">연락처</div>
+        <!-- 연락처 수정 -->
+        <div class="ev-val">000-0000-0000</div>
+      </div>
+    </div>
+    <div class="event-row">
+      <div class="ev-icon">🚗</div>
+      <div>
+        <div class="ev-label">주차 안내</div>
+        <div class="ev-val">주차 가능 (3시간 무료)</div>
+      </div>
+    </div>
+    <div class="event-row">
+      <div class="ev-icon">🚇</div>
+      <div>
+        <div class="ev-label">대중교통</div>
+        <div class="ev-val">00역 1번 출구 도보 5분</div>
+      </div>
+    </div>
+    <div class="event-row">
+      <div class="ev-icon">🍽️</div>
+      <div>
+        <div class="ev-label">식사 안내</div>
+        <div class="ev-val">코스 식사 제공</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="map-btns fade-up">
+    <!-- 지도 URL: 실제 장소명으로 수정 -->
+    <a href="https://map.naver.com/v5/search/00호텔" target="_blank" class="map-btn naver">
+      🗺️ 네이버 지도로 보기
+    </a>
+    <a href="https://map.kakao.com/?q=00호텔" target="_blank" class="map-btn kakao">
+      📍 카카오맵으로 보기
+    </a>
+    <button class="map-btn copy" onclick="copyAddr()">
+      📋 주소 복사하기
+    </button>
+  </div>
+</section>
+
+<!-- 푸터 -->
+<footer>
+  <div class="f-title">아버지의 환갑을 진심으로 축하합니다</div>
+  2026년 · 소중한 날을 함께해주셔서 감사합니다
+</footer>
+
+<script>
+/* ────────────────────────────────
+   음악
+──────────────────────────────── */
+const bgm       = document.getElementById('bgm');
+const bars      = document.getElementById('bars');
+const musicLabel= document.getElementById('musicLabel');
+let playing     = false;
+
+function toggleMusic() {
+  if (playing) {
+    bgm.pause();
+    bars.classList.remove('playing');
+    musicLabel.textContent = '음악 켜기';
+    playing = false;
+  } else {
+    bgm.play()
+      .then(() => {
+        bars.classList.add('playing');
+        musicLabel.textContent = '음악 끄기';
+        playing = true;
+      })
+      .catch(() => toast('bgm.mp3 파일을 같은 폴더에 넣어주세요 🎵'));
+  }
+}
+
+/* ────────────────────────────────
+   토스트
+──────────────────────────────── */
+let toastTimer;
+function toast(msg, ms = 2200) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), ms);
+}
+
+/* ────────────────────────────────
+   주소 복사
+──────────────────────────────── */
+function copyAddr() {
+  const text = document.getElementById('addr').textContent;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => toast('주소가 복사되었습니다 📋'));
+  } else {
+    const el = document.createElement('textarea');
+    el.value = text;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    toast('주소가 복사되었습니다 📋');
+  }
+}
+
+/* ────────────────────────────────
+   캐러셀 도트 초기화 & 스크롤 동기화
+──────────────────────────────── */
+function initCarousels() {
+  document.querySelectorAll('.carousel').forEach(car => {
+    const chId   = car.dataset.chapter;
+    const slides = car.querySelectorAll('.slide');
+    const dotsEl = document.getElementById('dots-' + chId);
+
+    /* 도트 생성 */
+    slides.forEach((_, i) => {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' on' : '');
+      dotsEl.appendChild(d);
+    });
+
+    /* 스크롤 → 도트 갱신 */
+    car.addEventListener('scroll', () => {
+      const slideW = slides[0].offsetWidth + 12; // gap 포함
+      const idx    = Math.min(
+        Math.round(car.scrollLeft / slideW),
+        slides.length - 1
+      );
+      dotsEl.querySelectorAll('.dot').forEach((d, i) =>
+        d.classList.toggle('on', i === idx)
+      );
+    }, { passive: true });
+  });
+}
+
+/* ────────────────────────────────
+   라이트박스
+──────────────────────────────── */
+let lbSlides = [];   // 현재 챕터 슬라이드 NodeList
+let lbIndex  = 0;
+
+function openLb(chId, idx) {
+  const car   = document.getElementById('car-' + chId);
+  lbSlides    = [...car.querySelectorAll('.slide')];
+  lbIndex     = idx;
+  renderLb();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function renderLb() {
+  const slide   = lbSlides[lbIndex];
+  const lbImg   = document.getElementById('lb-img');
+  const counter = document.getElementById('lb-counter');
+
+  /* 이미지 또는 이모지 */
+  const img = slide.querySelector('img');
+  if (img) {
+    lbImg.innerHTML = '';
+    const clone = img.cloneNode();
+    clone.style.cssText = 'max-width:92vw;max-height:78vh;border-radius:14px;object-fit:contain;display:block;';
+    lbImg.appendChild(clone);
+    lbImg.style.fontSize = '';
+  } else {
+    /* 이모지 플레이스홀더 */
+    lbImg.innerHTML = slide.childNodes[0].textContent.trim();
+    lbImg.style.fontSize = '88px';
+  }
+
+  /* 진입 애니메이션 재실행 */
+  lbImg.style.transform = 'scale(.9)';
+  requestAnimationFrame(() => {
+    lbImg.style.transition = 'transform .3s cubic-bezier(.25,.46,.45,.94)';
+    lbImg.style.transform  = 'scale(1)';
+  });
+
+  /* 화살표 표시/숨김 */
+  document.getElementById('lb-prev').style.display = lbIndex > 0 ? 'flex' : 'none';
+  document.getElementById('lb-next').style.display = lbIndex < lbSlides.length - 1 ? 'flex' : 'none';
+
+  counter.textContent = lbSlides.length > 1
+    ? (lbIndex + 1) + ' / ' + lbSlides.length
+    : '';
+}
+
+function lbMove(dir) {
+  const next = lbIndex + dir;
+  if (next < 0 || next >= lbSlides.length) return;
+
+  const lbImg = document.getElementById('lb-img');
+  lbImg.style.transition = 'transform .25s ease, opacity .25s ease';
+  lbImg.style.transform  = dir > 0 ? 'translateX(-30px) scale(.92)' : 'translateX(30px) scale(.92)';
+  lbImg.style.opacity    = '0';
+
+  setTimeout(() => {
+    lbIndex = next;
+    lbImg.style.transition = 'none';
+    lbImg.style.transform  = dir > 0 ? 'translateX(30px) scale(.92)' : 'translateX(-30px) scale(.92)';
+    lbImg.style.opacity    = '0';
+    renderLb();
+    requestAnimationFrame(() => {
+      lbImg.style.transition = 'transform .3s cubic-bezier(.25,.46,.45,.94), opacity .3s ease';
+      lbImg.style.transform  = 'scale(1)';
+      lbImg.style.opacity    = '1';
+    });
+  }, 200);
+}
+
+function closeLb() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function lbBgClick(e) {
+  if (e.target === document.getElementById('lightbox') ||
+      e.target === document.getElementById('lb-stage')) closeLb();
+}
+
+/* 키보드 */
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'Escape') closeLb();
+  if (e.key === 'ArrowLeft')  lbMove(-1);
+  if (e.key === 'ArrowRight') lbMove(1);
+});
+
+/* ────────────────────────────────
+   스크롤 페이드인
+──────────────────────────────── */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+
+/* ────────────────────────────────
+   꽃잎 애니메이션
+──────────────────────────────── */
+const PETALS = ['🌸','🌼','🌺','✨'];
+const wrap   = document.getElementById('petalWrap');
+for (let i = 0; i < 14; i++) {
+  const p = document.createElement('div');
+  p.className           = 'petal';
+  p.textContent         = PETALS[i % PETALS.length];
+  p.style.left          = (Math.random() * 100) + '%';
+  p.style.fontSize      = (13 + Math.random() * 10) + 'px';
+  p.style.animationDelay    = (Math.random() * 10) + 's';
+  p.style.animationDuration = (7  + Math.random() * 7)  + 's';
+  wrap.appendChild(p);
+}
+
+/* ── 초기화 ── */
+initCarousels();
+</script>
+</body>
+</html>
