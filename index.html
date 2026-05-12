@@ -145,7 +145,7 @@ textarea.form-input{resize:vertical;min-height:90px}
     <button class="nav-tab" onclick="showScreen('rsvp')">참석</button>
     <button class="nav-tab" onclick="showScreen('message')">메시지</button>
     <button class="nav-tab" onclick="showScreen('book')">메시지북</button>
-    <button class="nav-tab" onclick="showScreen('admin')">관리</button>
+
   </div>
 </nav>
 <div class="toast" id="toast"></div>
@@ -329,51 +329,7 @@ textarea.form-input{resize:vertical;min-height:90px}
   </div>
 </div>
 
-<!-- ─── 관리자 ─── -->
-<div id="screen-admin" class="screen">
-  <div class="container">
-    <div class="admin-section">
-      <div class="form-header" style="text-align:left;margin-bottom:1.25rem">
-        <h2>관리자 화면</h2>
-        <p style="font-size:.83rem;color:var(--text2)">이종열 님 환갑 — 행사 현황 요약</p>
-      </div>
-      <div class="admin-stats">
-        <div class="stat-card"><div class="num" id="stat-total">0</div><div class="lbl">총 응답자</div></div>
-        <div class="stat-card"><div class="num" id="stat-yes">0</div><div class="lbl">참석 예정</div></div>
-        <div class="stat-card"><div class="num" id="stat-people">0</div><div class="lbl">총 예상 인원</div></div>
-        <div class="stat-card"><div class="num" id="stat-msgs">0</div><div class="lbl">축하 메시지</div></div>
-      </div>
 
-      <div class="admin-card">
-        <div class="admin-card-header"><h3>초대장 배경 사진</h3></div>
-        <div style="padding:1rem 1.1rem">
-          <p style="font-size:.83rem;color:var(--text2);margin-bottom:.75rem">주인공 사진을 업로드하면 초대장 상단 배경에 표시됩니다.</p>
-          <input type="file" id="hero-file" accept="image/*" onchange="handleHeroImage(event)" style="display:none">
-          <button class="btn btn-outline" onclick="document.getElementById('hero-file').click()">📷 사진 교체하기</button>
-          <div id="hero-preview" style="display:none;margin-top:.75rem">
-            <div class="hero-preview-wrap">
-              <img id="hero-preview-img" alt="배경 미리보기">
-              <button class="remove-btn" onclick="removeHeroImage()">삭제</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="admin-card">
-        <div class="admin-card-header"><h3>참석자 목록</h3></div>
-        <div id="rsvp-list"><div class="loading">아직 응답이 없습니다</div></div>
-      </div>
-
-      <div class="admin-card">
-        <div class="admin-card-header"><h3>행사 관리</h3></div>
-        <div style="padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.6rem">
-          <button class="btn btn-outline" onclick="copyLink()">🔗 초대장 링크 복사</button>
-          <button class="btn btn-sky" onclick="showScreen('book')">📖 메시지북 보기</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <script>
 // ────────────────────────────────────────
@@ -399,7 +355,7 @@ function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').
 
 function showScreen(name){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  ['invite','rsvp','message','book','admin'].forEach((n,i)=>{
+  ['invite','rsvp','message','book'].forEach((n,i)=>{
     document.querySelectorAll('.nav-tab')[i].classList.toggle('active',n===name);
   });
   document.getElementById('screen-'+name).classList.add('active');
