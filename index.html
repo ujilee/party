@@ -122,3 +122,317 @@ textarea.form-input{resize:vertical;min-height:90px}
 .rsvp-row+.rsvp-row{border-top:1px solid var(--border)}
 .rsvp-name{font-weight:600}
 .rsvp-detail{font-size:.78rem;color:var(--text3);margin-top:.1rem}
+
+.success-screen{text-align:center;padding:3rem 2rem}
+.success-screen .icon{font-size:3rem;margin-bottom:1rem}
+.success-screen h3{font-size:1.15rem;font-weight:700;margin-bottom:.5rem}
+.success-screen p{font-size:.88rem;color:var(--text2);line-height:1.75}
+.success-btns{display:flex;flex-direction:column;gap:.6rem;margin-top:1.5rem}
+.loading{text-align:center;padding:2.5rem;color:var(--text3);font-size:.88rem}
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:#1c2d38;color:#fff;padding:.7rem 1.4rem;border-radius:100px;font-size:.85rem;opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.hero-preview-wrap{margin-top:.6rem;border-radius:10px;overflow:hidden;position:relative;border:1px solid var(--border)}
+.hero-preview-wrap img{width:100%;height:130px;object-fit:cover;display:block}
+.hero-preview-wrap .remove-btn{position:absolute;top:.4rem;right:.4rem;background:rgba(0,0,0,0.55);color:#fff;border:none;border-radius:6px;padding:.2rem .6rem;font-size:.78rem;cursor:pointer}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="nav-logo">🎊 이종열님 환갑잔치</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showScreen('invite')">초대장</button>
+    <button class="nav-tab" onclick="showScreen('rsvp')">참석</button>
+    <button class="nav-tab" onclick="showScreen('message')">메시지</button>
+    <button class="nav-tab" onclick="showScreen('book')">메시지북</button>
+    <button class="nav-tab" onclick="showScreen('admin')">관리</button>
+  </div>
+</nav>
+<div class="toast" id="toast"></div>
+
+<!-- ─── 초대장 ─── -->
+<div id="screen-invite" class="screen active">
+  <div class="container">
+    <div class="hero-photo">
+      <div class="hero-bg" id="hero-bg"></div>
+      <img class="hero-bg-img" id="hero-bg-img" alt="">
+      <div class="hero-overlay"></div>
+      <div class="hero-inner">
+        <div class="hero-name">이종열님의 환갑잔치</div>
+        <div class="hero-sub">예순번째 생일을 함께 축하합니다</div>
+      </div>
+    </div>
+
+    <div class="invite-body">
+      <div class="invite-title">
+        <h2>이종열님의 60번째 생일을<br>함께 축하해 주세요</h2>
+        <p>가족의 마음을 담아 작은 자리를 마련했습니다.<br>참석 여부와 따뜻한 축하 한마디를 남겨주시면<br>큰 기쁨이 됩니다.</p>
+      </div>
+
+      <div class="info-box">
+        <div class="info-row">
+          <div class="info-icon">📅</div>
+          <div>
+            <div class="info-label">날짜 및 시간</div>
+            <div class="info-val">2026년 06월 27일(토) 오전 11시</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-icon">📍</div>
+          <div>
+            <div class="info-label">장소</div>
+            <div class="info-val">경기도 하남시 미사동로 38 한채당</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-icon">📞</div>
+          <div>
+            <div class="info-label">문의 (딸 이승지, 이유지)</div>
+            <div class="info-val">010-6791-9125</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-icon">📌</div>
+          <div>
+            <div class="info-label">참석 응답 마감</div>
+            <div class="info-val">2026년 06월 20일까지</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider">초대장 안내</div>
+
+      <div class="action-btns">
+        <button class="btn btn-sky" onclick="showScreen('rsvp')">✉️ 참석 여부 남기기</button>
+        <button class="btn btn-outline" onclick="showScreen('message')">💌 축하 메시지 남기기</button>
+        <button class="btn btn-outline" onclick="copyLink()">🔗 초대장 링크 공유</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 참석 여부 ─── -->
+<div id="screen-rsvp" class="screen">
+  <div class="container">
+    <div id="rsvp-form-wrap">
+      <div class="form-section">
+        <div class="form-header">
+          <h2>참석 여부 남기기</h2>
+          <p>이종열님의 환갑 행사에 오실 수 있나요?</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">이름 *</label>
+          <input class="form-input" id="rsvp-name" type="text" placeholder="홍길동">
+        </div>
+        <div class="form-group">
+          <label class="form-label">참석 여부 *</label>
+          <div class="attend-btns">
+            <button class="attend-btn" id="btn-yes" onclick="setAttend('yes')">✅ 참석</button>
+            <button class="attend-btn" id="btn-no" onclick="setAttend('no')">❌ 불참</button>
+            <button class="attend-btn" id="btn-maybe" onclick="setAttend('maybe')">🤔 미정</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">동반 인원 (본인 포함)</label>
+          <div class="count-row">
+            <button class="count-btn" onclick="changeCount(-1)">−</button>
+            <span class="count-val" id="count-val">1</span>
+            <button class="count-btn" onclick="changeCount(1)">+</button>
+            <span style="font-size:.82rem;color:var(--text3)">명</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">연락처 (선택)</label>
+          <input class="form-input" id="rsvp-phone" type="tel" placeholder="010-0000-0000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">요청사항 (알레르기, 유아 식사 등)</label>
+          <input class="form-input" id="rsvp-request" type="text" placeholder="특별한 요청이 있으시면 입력해 주세요">
+        </div>
+        <div class="form-group">
+          <label class="form-label">축하 한마디</label>
+          <input class="form-input" id="rsvp-short" type="text" placeholder="짧은 축하 메시지를 남겨주세요">
+        </div>
+        <button class="btn btn-sky" onclick="submitRsvp()" id="rsvp-submit-btn" style="margin-top:.5rem">응답 제출하기</button>
+      </div>
+    </div>
+    <div id="rsvp-success" class="success-screen" style="display:none">
+      <div class="icon">🎉</div>
+      <h3>응답이 전달되었습니다!</h3>
+      <p>소중한 응답 감사합니다.<br>따뜻한 축하 메시지도 남겨주시겠어요?</p>
+      <div class="success-btns">
+        <button class="btn btn-rose" onclick="showScreen('message')">💌 축하 메시지도 남기기</button>
+        <button class="btn btn-outline" onclick="showScreen('invite')">초대장으로 돌아가기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 메시지 작성 ─── -->
+<div id="screen-message" class="screen">
+  <div class="container">
+    <div id="msg-form-wrap">
+      <div class="form-section">
+        <div class="form-header">
+          <h2>축하 메시지 남기기</h2>
+          <p>이종열님께 마음을 담은 메시지를 전해드려요.</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">이름 *</label>
+          <input class="form-input" id="msg-name" type="text" placeholder="홍길동">
+        </div>
+        <div class="form-group">
+          <label class="form-label">주인공과의 관계 *</label>
+          <div class="rel-chips" id="rel-chips">
+            <div class="rel-chip" onclick="setRel(this,'자녀')">자녀</div>
+            <div class="rel-chip" onclick="setRel(this,'배우자')">배우자</div>
+            <div class="rel-chip" onclick="setRel(this,'형제·자매')">형제·자매</div>
+            <div class="rel-chip" onclick="setRel(this,'친척')">친척</div>
+            <div class="rel-chip" onclick="setRel(this,'친구')">친구</div>
+            <div class="rel-chip" onclick="setRel(this,'지인')">지인</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">메시지 제목</label>
+          <input class="form-input" id="msg-title" type="text" placeholder="아버지께, 사랑하는 오빠에게 등">
+        </div>
+        <div class="form-group">
+          <label class="form-label">축하 메시지 *</label>
+          <textarea class="form-input" id="msg-body" rows="5" placeholder="메시지를 자유롭게 작성해 주세요..." oninput="updateGuide()"></textarea>
+          <div class="guide-box" id="msg-guide">💙 함께한 추억이나 감사했던 순간을 적어주세요.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">메시지북 공개 여부</label>
+          <div class="attend-btns" style="gap:.5rem">
+            <button class="attend-btn sel-sky" id="pub-yes" onclick="setPub(true)" style="flex:none;padding:.55rem 1.2rem">🌐 공개</button>
+            <button class="attend-btn" id="pub-no" onclick="setPub(false)" style="flex:none;padding:.55rem 1.2rem">🔒 비공개</button>
+          </div>
+        </div>
+        <button class="btn btn-rose" onclick="submitMsg()" id="msg-submit-btn" style="margin-top:.5rem">💌 마음 남기기</button>
+      </div>
+    </div>
+    <div id="msg-success" class="success-screen" style="display:none">
+      <div class="icon">💖</div>
+      <h3>메시지가 전달되었습니다</h3>
+      <p>소중한 마음 감사합니다.<br>이종열님의 메시지북에 소중히 담겠습니다.</p>
+      <div class="success-btns">
+        <button class="btn btn-sky" onclick="showScreen('book')">📖 메시지북 보기</button>
+        <button class="btn btn-outline" onclick="showScreen('invite')">초대장으로 돌아가기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 메시지북 ─── -->
+<div id="screen-book" class="screen">
+  <div class="container">
+    <div class="book-header">
+      <h2>📖 모두가 남긴 축하의 마음</h2>
+      <p>이종열님께 전해진 <span id="msg-count">0</span>개의 메시지</p>
+    </div>
+    <div class="filter-row">
+      <div class="filter-chip active" onclick="filterMsgs('all',this)">전체</div>
+      <div class="filter-chip" onclick="filterMsgs('자녀',this)">자녀</div>
+      <div class="filter-chip" onclick="filterMsgs('배우자',this)">배우자</div>
+      <div class="filter-chip" onclick="filterMsgs('형제·자매',this)">형제·자매</div>
+      <div class="filter-chip" onclick="filterMsgs('친척',this)">친척</div>
+      <div class="filter-chip" onclick="filterMsgs('친구',this)">친구</div>
+      <div class="filter-chip" onclick="filterMsgs('지인',this)">지인</div>
+    </div>
+    <div class="msg-grid" id="msg-grid"></div>
+  </div>
+</div>
+
+<!-- ─── 관리자 ─── -->
+<div id="screen-admin" class="screen">
+  <div class="container">
+    <div class="admin-section">
+      <div class="form-header" style="text-align:left;margin-bottom:1.25rem">
+        <h2>관리자 화면</h2>
+        <p style="font-size:.83rem;color:var(--text2)">이종열 님 환갑 — 행사 현황 요약</p>
+      </div>
+      <div class="admin-stats">
+        <div class="stat-card"><div class="num" id="stat-total">0</div><div class="lbl">총 응답자</div></div>
+        <div class="stat-card"><div class="num" id="stat-yes">0</div><div class="lbl">참석 예정</div></div>
+        <div class="stat-card"><div class="num" id="stat-people">0</div><div class="lbl">총 예상 인원</div></div>
+        <div class="stat-card"><div class="num" id="stat-msgs">0</div><div class="lbl">축하 메시지</div></div>
+      </div>
+
+      <div class="admin-card">
+        <div class="admin-card-header"><h3>초대장 배경 사진</h3></div>
+        <div style="padding:1rem 1.1rem">
+          <p style="font-size:.83rem;color:var(--text2);margin-bottom:.75rem">
+            사진을 선택하면 초대장 상단 배경에 바로 표시됩니다.<br>
+            <span style="font-size:.78rem;color:var(--text3)">※ 이 기기 브라우저에만 저장됩니다.</span>
+          </p>
+          <input type="file" id="hero-file" accept="image/*" onchange="handleHeroImage(event)" style="display:none">
+          <button class="btn btn-outline" onclick="document.getElementById('hero-file').click()">📷 사진 선택하기</button>
+          <div id="hero-preview" style="display:none;margin-top:.75rem">
+            <div class="hero-preview-wrap">
+              <img id="hero-preview-img" alt="배경 미리보기">
+              <button class="remove-btn" onclick="removeHeroImage()">삭제</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <div class="admin-card-header"><h3>참석자 목록</h3></div>
+        <div id="rsvp-list"><div class="loading">아직 응답이 없습니다</div></div>
+      </div>
+
+      <div class="admin-card">
+        <div class="admin-card-header"><h3>행사 관리</h3></div>
+        <div style="padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.6rem">
+          <button class="btn btn-outline" onclick="copyLink()">🔗 초대장 링크 복사</button>
+          <button class="btn btn-sky" onclick="showScreen('book')">📖 메시지북 보기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ────────────────────────────────────────
+//  배경 사진 설정 (모든 방문자에게 보이게 하려면)
+//  1. 사진 파일을 index.html과 같은 폴더에 넣기
+//  2. 아래 파일명을 입력하고 GitHub에 함께 올리기
+//  예: const HERO_IMAGE = 'photo.jpg';
+// ────────────────────────────────────────
+const HERO_IMAGE = '';
+
+// ── 상태 ──
+let attendState='', countVal=1, selectedRel='', isPublic=true, currentFilter='all';
+const rsvps=[], msgs=[];
+const avatarColors=['#4EAAD4','#c0696a','#3a7d44','#6b7db3','#a07040','#7a5a9a'];
+
+const sampleMsgs=[
+  {name:'이승지',rel:'자녀',title:'아버지, 환갑 축하해요 🎉',body:'아버지가 항상 우리 곁에서 따뜻하게 보살펴줘서 정말 감사해요. 60년의 인생을 당당하고 아름답게 살아온 아버지가 너무 자랑스러워요. 앞으로도 건강하고 행복하게 지내세요!',is_public:true},
+  {name:'이유지',rel:'자녀',title:'아빠 사랑해요 💙',body:'파리에서 멋있게 찍힌 아빠 사진처럼, 앞으로의 인생도 그렇게 여유롭고 멋지게 즐기셨으면 해요. 환갑 진심으로 축하드려요!',is_public:true},
+  {name:'김민준',rel:'친구',title:'종열아, 환갑 축하한다!',body:'우리가 어느새 이 나이가 됐구나. 앞으로도 맛있는 거 먹고 좋은 곳 다니면서 건강하게 지내자. 늘 응원하고 사랑해!',is_public:true},
+];
+
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  ['invite','rsvp','message','book','admin'].forEach((n,i)=>{
+    document.querySelectorAll('.nav-tab')[i].classList.toggle('active',n===name);
+  });
+  document.getElementById('screen-'+name).classList.add('active');
+  if(name==='book') renderBook();
+  if(name==='admin') renderAdmin();
+  window.scrollTo(0,0);
+}
+
+function showMsg(txt){
+  const t=document.getElementById('toast');
+  t.textContent=txt;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+function copyLink(){
+  navigator.clipboard.writeText(location.href)
+    .then(()=>showMsg('링크가 복사되었습니다 📋'))
+    .catch(()=>{prompt('아래 링크를 복사해 공유하세요:',location.href)});
+}
